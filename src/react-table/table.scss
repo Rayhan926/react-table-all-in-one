@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap");
+
+@mixin flex_center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+$gray: #e4e4f0;
+
+// -------- React Table Start --------
+._s_react_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "DM Sans", sans-serif;
+  font-size: 14px;
+
+  // -------- Table Header Start --------
+  thead {
+    background: $gray;
+    font-weight: 700;
+
+    th {
+      padding: 8px 12px;
+      text-align: left;
+    }
+  }
+  // -------- Table Header End --------
+
+  // -------- Table Body Start --------
+  tbody {
+    tr {
+      &:nth-child(even) {
+        background: $gray;
+      }
+    }
+    td {
+      padding: 10px 12px;
+    }
+  }
+  // -------- Table Body End --------
+}
+// -------- React Table End --------
+
+// -------- Table Pagination and rows per page section Start --------
+._s_pagination_and_rows_per_page_wrapper {
+  @include flex_center();
+  justify-content: space-between;
+}
+// -------- Table Pagination and rows per page section End --------
+
+// -------- React Table Start --------
+// -------- React Table End --------
