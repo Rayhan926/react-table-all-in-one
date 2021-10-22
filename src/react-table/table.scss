@@ -9,10 +9,12 @@
 $gray: #e4e4f0;
 
 // -------- React Table Start --------
+._s_react_table_wrapper {
+  font-family: "DM Sans", sans-serif;
+}
 ._s_react_table {
   width: 100%;
   border-collapse: collapse;
-  font-family: "DM Sans", sans-serif;
   font-size: 14px;
 
   // -------- Table Header Start --------
@@ -49,5 +51,55 @@ $gray: #e4e4f0;
 }
 // -------- Table Pagination and rows per page section End --------
 
-// -------- React Table Start --------
-// -------- React Table End --------
+// -------- React Table Setting Start --------
+._s_overly_wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  @include flex_center();
+  z-index: 999999999;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s ease-in-out;
+
+  &._s_open_overly {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  ._s_overly_content_wrapper {
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    width: 450px;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+
+    ._s_overly_header {
+      border-bottom: 1px solid $gray;
+      padding: 15px 20px;
+      color: #111;
+      flex-shrink: 0;
+
+      h3 {
+        font-size: 18px;
+        line-height: 22px;
+        margin: 0;
+      }
+    }
+
+    ._s_overly_body {
+      flex-grow: 1;
+      overflow: hidden;
+      overflow-y: auto;
+    }
+  }
+}
+// -------- React Table Setting End --------
+
+// -------- React Table Setting Start --------
+// -------- React Table Setting End --------

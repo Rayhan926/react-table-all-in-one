@@ -17,8 +17,21 @@ function Table({
   pageString = "page",
   limitString = "limit",
   queryString = "q",
+  tableId = "react_table",
 }) {
   if (!url) throw new Error("url property is required to fetch the data");
+
+  const setBlankInitialStates = () => {
+    const defaultBlankStates = {
+      initialHiddenColumns: [],
+    };
+    localStorage.setItem(tableId, JSON.stringify(defaultBlankStates));
+    return localStorage.getItem(tableId);
+  };
+
+  const initialStatesInJSON =
+    localStorage.getItem(tableId) || setBlankInitialStates();
+  const { initialHiddenColumns } = JSON.parse(initialStatesInJSON);
 
   const rowsPerPageHandler = (e) => {
     const value = e.target.value;
@@ -96,19 +109,47 @@ function Table({
     dataFetcher();
   }, [url, searchParams]);
 
-  const tableInstance = useTable({ data: tableData, columns: tableColumns }); // tableInstance from userTable hook
+  const tableInstance = useTable({
+    data: tableData,
+    columns: tableColumns,
+    initialState: {
+      hiddenColumns: initialHiddenColumns,
+    },
+  }); // tableInstance from userTable hook
 
   // Distructuring table tableInstance Object
-  const { getTableProps, getTableBodyProps, prepareRow, headerGroups, rows } =
-    tableInstance;
+  const {
+    getTableProps,
+    getTableBodyProps,
+    prepareRow,
+    headerGroups,
+    rows,
+    allColumns,
+    state,
+    setHiddenColumns,
+  } = tableInstance;
+
+  const { hiddenColumns } = state;
+
+  useEffect(() => {
+    localStorage.setItem(
+      tableId,
+      JSON.stringify({
+        initialHiddenColumns: hiddenColumns,
+      })
+    );
+  }, [hiddenColumns]);
 
   return (
-    <>
+    <div className="_s_react_table_wrapper">
       {/* Table Top Search Bar and Setting ----Start---- */}
       <reactTableContext.Provider
         value={{
-          setSearchParams,
+          searchParams,
           queryString,
+          allColumns,
+          setSearchParams,
+          setHiddenColumns,
         }}
       >
         <TableTopBar />
@@ -173,7 +214,7 @@ function Table({
         {/* Rows per page ----End---- */}
       </div>
       {/* Table Pagination and rows per page section ----End---- */}
-    </>
+    </div>
   );
 }
 

@@ -2,7 +2,8 @@ import { useContext, useRef } from "react";
 import { reactTableContext } from "./Table";
 
 function TableGlobalSearch() {
-  const { queryString, setSearchParams } = useContext(reactTableContext);
+  const { queryString, setSearchParams, searchParams } =
+    useContext(reactTableContext);
   const inputRef = useRef(null);
 
   const globalSearchHandler = (e) => {
@@ -22,7 +23,14 @@ function TableGlobalSearch() {
   return (
     <>
       <form onSubmit={globalSearchHandler}>
-        <input type="text" ref={inputRef} placeholder="Search" />
+        <input
+          type="text"
+          ref={inputRef}
+          defaultValue={searchParams.filter(
+            (e) => e[1] && e[0] === queryString
+          )}
+          placeholder="Search"
+        />
       </form>
     </>
   );
