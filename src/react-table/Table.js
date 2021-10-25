@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useTable } from 'react-table';
+import ErrorIndicator from './ErrorIndicator';
+import LoadingIndicator from './LoadingIndicator';
 import Pagination from './Pagination';
 import './table.scss';
 import TableHeader from './TableHeader';
@@ -91,6 +93,7 @@ function Table({
         });
 
         setLoading(true);
+        setErrorLoadingData(false);
         fetch(finalUrl, {
             method: 'get',
         })
@@ -188,17 +191,11 @@ function Table({
 
                 {/* Table Body ----Start---- */}
                 <tbody {...getTableBodyProps()}>
-                    {loading && (
+                    {(errorLoadingData || loading) && (
                         <tr>
-                            <td>
-                                <h1>Loading...</h1>
-                            </td>
-                        </tr>
-                    )}
-                    {errorLoadingData && (
-                        <tr>
-                            <td>
-                                <h1>{errorLoadingData}</h1>
+                            <td colSpan="100%">
+                                {loading && <LoadingIndicator />}
+                                {errorLoadingData && <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />}
                             </td>
                         </tr>
                     )}

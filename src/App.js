@@ -95,7 +95,7 @@ function App() {
                     totalData: res.data.order_count,
                 };
             }}
-        // selectErrorMessage={(err) => JSON.parse(err).message}
+            selectErrorMessage={(err) => JSON.parse(err).message}
         />
     );
 }

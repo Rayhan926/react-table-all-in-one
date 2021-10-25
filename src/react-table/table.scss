@@ -125,6 +125,7 @@ $gray_900: #161c24;
     margin-left: 8px;
     border-radius: 4px;
     cursor: pointer;
+    transition: 0.2s ease-in-out;
 
     &:hover {
         background: $gray_200;
@@ -194,13 +195,13 @@ $gray_900: #161c24;
     ._s_table_title {
         margin: 0;
         // margin-bottom: 5px;
-        font-size: 18px;
+        font-size: 22px;
         font-weight: 700;
-        line-height: 28px;
+        line-height: 32px;
     }
     ._s_table_subtitle {
         margin: 0;
-        font-size: 14px;
+        font-size: 16px;
         color: #444;
         line-height: 22px;
     }
@@ -232,9 +233,14 @@ $gray_900: #161c24;
         border-radius: 4px;
         outline: none;
         background: $fff;
+        transition: 0.2s ease-in-out;
+
+        &:hover {
+            border-color: $gray_600;
+        }
 
         &:focus {
-            border-color: $gray_600;
+            border-color: $gray_800;
         }
     }
 
@@ -293,6 +299,49 @@ $gray_900: #161c24;
     }
 }
 // -------- React Table Pagination End --------
+
+// -------- React Table Error Indicator Start --------
+._s_table_error_indicator_wrapper {
+    @include flex_center();
+    flex-direction: column;
+    padding: 100px 20px;
+
+    ._s_error_icon {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 15px;
+
+        svg {
+            color: red;
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    ._s_error_title {
+        font-size: 25px;
+        color: $gray_800;
+        line-height: 30px;
+        margin-bottom: 20px;
+    }
+    ._s_try_again_btn {
+        padding: 10px 16px;
+        border-radius: 4px;
+        background: rgb(0, 77, 243);
+        color: $fff;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-weight: 500;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+
+        &:hover {
+            background: rgb(0, 57, 179);
+        }
+    }
+}
+// -------- React Table Error Indicator End --------
 
 // -------- React Table Setting Start --------
 // -------- React Table Setting End --------
