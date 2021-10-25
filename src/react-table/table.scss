@@ -1,105 +1,298 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap");
+// @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @mixin flex_center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-$gray: #e4e4f0;
+$fff: #ffffff;
+$gray_100: #f9fafb;
+$gray_200: #f4f6f8;
+$gray_300: #dfe3e8;
+$gray_400: #c4cdd5;
+$gray_500: #919eab;
+$gray_600: #637381;
+$gray_700: #454f5b;
+$gray_800: #212b36;
+$gray_900: #161c24;
+
+// -------- React Table Global Class Start --------
+._s_btn {
+    font-size: 13px;
+    border: 1px solid $gray_400;
+    border-radius: 3px;
+    min-width: 28px;
+    height: 28px;
+    @include flex_center();
+    padding: 0 6px;
+    cursor: pointer;
+    outline: none;
+    background: $fff;
+    color: $gray_900;
+    flex-shrink: 0;
+    transition: 0.2s ease-in-out;
+    font-weight: 400;
+    user-select: none;
+}
+// -------- React Table Global Class End --------
 
 // -------- React Table Start --------
 ._s_react_table_wrapper {
-  font-family: "DM Sans", sans-serif;
+    width: 95%;
+    margin: 50px auto;
+    // font-family: 'DM Sans', sans-serif;
+    font-family: 'Public Sans', sans-serif;
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 }
 ._s_react_table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
 
-  // -------- Table Header Start --------
-  thead {
-    background: $gray;
-    font-weight: 700;
+    // -------- Table Header Start --------
+    thead {
+        background: $gray_100;
+        font-weight: 700;
 
-    th {
-      padding: 8px 12px;
-      text-align: left;
+        th {
+            padding: 10px 12px;
+            text-align: left;
+        }
     }
-  }
-  // -------- Table Header End --------
+    // -------- Table Header End --------
 
-  // -------- Table Body Start --------
-  tbody {
-    tr {
-      &:nth-child(even) {
-        background: $gray;
-      }
+    // -------- Table Body Start --------
+    tbody {
+        tr {
+            &:nth-child(even) {
+                background: #f1f1ff93;
+            }
+        }
+        td {
+            padding: 12px 14px;
+        }
     }
-    td {
-      padding: 10px 12px;
-    }
-  }
-  // -------- Table Body End --------
+    // -------- Table Body End --------
 }
 // -------- React Table End --------
 
 // -------- Table Pagination and rows per page section Start --------
 ._s_pagination_and_rows_per_page_wrapper {
-  @include flex_center();
-  justify-content: space-between;
+    @include flex_center();
+    justify-content: space-between;
+    margin-top: 20px;
+}
+._s_rows_per_page_select_wrapper {
+    @include flex_center();
+    @extend ._s_btn;
+    position: relative;
+}
+._s_rows_per_page_select {
+    appearance: none;
+    border: none;
+    outline: none;
+    padding: 0 12px;
+    padding-right: 25px;
+    cursor: pointer;
+    height: 100%;
+}
+._s_select_arrow_wrapper {
+    @include flex_center();
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 6px;
+    pointer-events: none;
+
+    svg {
+        color: $gray_800;
+    }
 }
 // -------- Table Pagination and rows per page section End --------
 
 // -------- React Table Setting Start --------
+._s_setting_modal_toggle_wrapper {
+    width: 38px;
+    height: 38px;
+    padding: 8px;
+    margin-left: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background: $gray_200;
+    }
+
+    svg {
+        width: 100%;
+        height: 100%;
+        color: $gray_900;
+    }
+}
 ._s_overly_wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  @include flex_center();
-  z-index: 999999999;
-  opacity: 0;
-  pointer-events: none;
-  transition: 0.2s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    @include flex_center();
+    z-index: 999999999;
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.2s ease-in-out;
 
-  &._s_open_overly {
-    opacity: 1;
-    pointer-events: all;
-  }
-
-  ._s_overly_content_wrapper {
-    background: #fff;
-    border-radius: 6px;
-    overflow: hidden;
-    width: 450px;
-    max-height: 95vh;
-    display: flex;
-    flex-direction: column;
-
-    ._s_overly_header {
-      border-bottom: 1px solid $gray;
-      padding: 15px 20px;
-      color: #111;
-      flex-shrink: 0;
-
-      h3 {
-        font-size: 18px;
-        line-height: 22px;
-        margin: 0;
-      }
+    &._s_open_overly {
+        opacity: 1;
+        pointer-events: all;
     }
 
-    ._s_overly_body {
-      flex-grow: 1;
-      overflow: hidden;
-      overflow-y: auto;
+    ._s_overly_content_wrapper {
+        background: $fff;
+        border-radius: 8px;
+        overflow: hidden;
+        width: 450px;
+        max-height: 95vh;
+        display: flex;
+        flex-direction: column;
+
+        ._s_overly_header {
+            border-bottom: 1px solid $gray_100;
+            padding: 15px 20px;
+            color: #111;
+            flex-shrink: 0;
+
+            h3 {
+                font-size: 18px;
+                line-height: 22px;
+                margin: 0;
+            }
+        }
+
+        ._s_overly_body {
+            flex-grow: 1;
+            overflow: hidden;
+            overflow-y: auto;
+        }
     }
-  }
 }
 // -------- React Table Setting End --------
+
+// -------- React Table Top Bar Start --------
+._s_table_topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    ._s_table_title {
+        margin: 0;
+        // margin-bottom: 5px;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 28px;
+    }
+    ._s_table_subtitle {
+        margin: 0;
+        font-size: 14px;
+        color: #444;
+        line-height: 22px;
+    }
+    ._s_topbar_global_search_and_table_setting_wrapper {
+        display: flex;
+        justify-content: flex-end;
+        height: 38px;
+    }
+}
+// -------- React Table Top Bar End --------
+
+// -------- React Table Global Search Start --------
+._s_global_search_wrapper {
+    position: relative;
+    max-width: 220px;
+    height: 100%;
+    flex-shrink: 0;
+
+    ._s_global_search_input {
+        font-size: 16px;
+        font-weight: 500;
+        color: #222;
+        border: 1px solid $gray_400;
+        padding: 8px 13px;
+        padding-right: 40px;
+        width: 100%;
+        height: 100%;
+        display: block;
+        border-radius: 4px;
+        outline: none;
+        background: $fff;
+
+        &:focus {
+            border-color: $gray_600;
+        }
+    }
+
+    ._s_clear_global_search_wrapper {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 38px;
+        height: 38px;
+        transform: scale(0.8);
+        background: $fff;
+        border-radius: 3px;
+        @include flex_center();
+        padding: 6px;
+        cursor: pointer;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            color: $gray_700;
+        }
+
+        &:hover {
+            background: $gray_200;
+        }
+    }
+}
+// -------- React Table Global Search End --------
+
+// -------- React Table Pagination Start --------
+._s_pagination_btn_wrapper {
+    display: flex;
+    gap: 8px;
+    button {
+        @extend ._s_btn;
+
+        svg {
+            width: 15px;
+            height: 15px;
+            transform: scale(1.1);
+        }
+
+        &:hover {
+            background: $gray_200;
+        }
+
+        &._s_active_page {
+            border-color: rgb(0, 54, 233) !important;
+            background: rgba(0, 54, 233, 0.06) !important;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+}
+// -------- React Table Pagination End --------
 
 // -------- React Table Setting Start --------
 // -------- React Table Setting End --------
