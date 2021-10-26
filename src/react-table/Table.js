@@ -191,14 +191,15 @@ function Table({
 
                 {/* Table Body ----Start---- */}
                 <tbody {...getTableBodyProps()}>
-                    {(errorLoadingData || loading) && (
-                        <tr>
-                            <td colSpan="100%">
-                                {loading && <LoadingIndicator />}
-                                {errorLoadingData && <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />}
-                            </td>
-                        </tr>
-                    )}
+                    {/* {(errorLoadingData || loading) && ( */}
+                    <tr className="_s_table_indicator_tr" >
+                        <td colSpan="100%">
+                            {loading && <LoadingIndicator data={tableData} />}
+                            {errorLoadingData && <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />}
+
+                        </td>
+                    </tr>
+                    {/* )} */}
                     {rows.map((row) => {
                         prepareRow(row);
                         return (
