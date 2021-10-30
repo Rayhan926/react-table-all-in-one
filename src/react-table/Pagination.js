@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 
 function Pagination({
-    count = 50,
-    boundaryCount = 3,
+    count = 5,
+    boundaryCount = 1,
+    siblingCount = 1,
     hideFirstButton = false,
     hideLastButton = false,
     hidePrevButton = false,
@@ -33,27 +34,102 @@ function Pagination({
         if (page > 1) onChange(page - 1);
     };
 
+    function range(size, startAt = 0) {
+        return [...Array(size).keys()].map(i => i + startAt);
+    }
+
+    const arrayRange = function (from, to, dotLast, dotFirst) {
+        if (from > to || typeof from !== 'number' || typeof to !== 'number') return []
+        const newArray = []
+        for (let i = from; i <= to; i++) {
+            newArray.push(i)
+        }
+        // dotFirst && newArray.shift('...')
+        // dotLast && newArray.push('...')
+        return newArray
+    }
+
+    const last = (arr) => arr[arr.length - 1]
+
+    // const paginationArray = useMemo(() => {
+    //     if (count > 7) {
+    //         const siblingSQ = siblingCount + siblingCount
+    //         const firstPortionLength = 2 + boundaryCount + siblingSQ
+    //         const middlePortionLength = siblingSQ + 1
+    //         const firstPortion = Array.from({ length: page >= firstPortionLength ? siblingSQ : firstPortionLength }, (_, i) => i + 1);
+
+    //         const middlePortion = (page >= firstPortionLength && page + siblingSQ + 2 < count) ?
+    //             [
+    //                 '...',
+    //                 page - 1,
+    //                 page,
+    //                 page + 1,
+    //                 '...'
+    //             ] : ['...'];
+    //         // range((count - page) + siblingSQ, page - 1)
+
+    //         const lastPortion =
+    //             (page + siblingSQ + 2 < count) ?
+    //                 Array.from({ length: boundaryCount }, (_, i) => count - (boundaryCount - (i + 1))) :
+    //                 page + siblingSQ + 2 >= count ?
+    //                     range(
+    //                         count - (siblingSQ + boundaryCount + boundaryCount),
+    //                         (count - (siblingSQ + boundaryCount + boundaryCount) + 1)
+    //                     ) : []
+
+    //         return [...firstPortion, ...middlePortion, ...lastPortion]
+    //     }
+
+    //     return Array.from({ length: count }, (_, i) => i + 1)
+    // }, [count, boundaryCount, siblingCount, page])
+
     const paginationArray = useMemo(() => {
-        if (count > 10) {
-            const firstPortion = Array.from(
-                { length: page >= boundaryCount ? boundaryCount + 3 : boundaryCount },
-                (_, i) => i + (page >= boundaryCount ? page - (boundaryCount - 1) : 1)
-            );
+        const startPage = 1; // Start Page
+        const startPageSQ = startPage + startPage
+        const siblingSQ = siblingCount + siblingCount
+        const boundarySQ = boundaryCount + boundaryCount
+        const firstPortionLength = siblingSQ + boundaryCount + startPageSQ
 
-            const dotSeparator = page + boundaryCount >= count ? null : '...';
 
-            const lastPortion = Array.from(
-                { length: boundaryCount },
-                (_, i) => i + (count - (boundaryCount - 1))
-            );
+        let firstPortion = arrayRange(
+            startPage,
+            firstPortionLength <= count ? firstPortionLength : count,
+            true
+        )
 
-            return [...new Set([...firstPortion, dotSeparator, ...lastPortion])].filter(
-                (e) => e && (e <= count || e === '...')
-            );
+        const f = page + siblingCount >= firstPortion.length + 1
+
+        if (f) {
+            firstPortion = arrayRange(startPage, boundaryCount)
         }
 
-        return Array.from({ length: count }, (_, i) => i + 1);
-    }, [count, page, boundaryCount]);
+
+        let middlePortion = f ?
+            arrayRange(page - siblingCount, page + siblingCount) :
+            []
+
+        let lastPortion = firstPortion.length < count ? arrayRange(
+            (count + 1) - boundaryCount,
+            count
+        ) : []
+
+        if (last(firstPortion) + 2 <= lastPortion[0]) {
+            firstPortion.push('...')
+        }
+
+        const lastOfMiddle = last(middlePortion)
+        if (lastOfMiddle + 2 <= lastPortion[0]) {
+            middlePortion.push('...')
+        }
+
+        if (lastOfMiddle + 2 >= lastPortion[0]) {
+            middlePortion = []
+            lastPortion = arrayRange(count - (siblingSQ + boundarySQ), count)
+        }
+
+
+        return [...firstPortion, ...middlePortion, ...lastPortion]
+    }, [count, boundaryCount, siblingCount, page])
 
     return (
         <div className="_s_pagination_btn_wrapper">
@@ -76,12 +152,14 @@ function Pagination({
 
 
             {/* Go to page button ----Start---- */}
-            {paginationArray.map((currentPage) => {
+            {paginationArray.map((currentPage, i) => {
+                if (!currentPage) return null;
+                // if (currentPage === '...') return currentPage
                 return (
                     <button
                         className={page === currentPage ? '_s_active_page' : ''}
                         onClick={() => goToPageHandler(currentPage)}
-                        key={currentPage}
+                        key={i}
                     >
                         {currentPage}
                     </button>

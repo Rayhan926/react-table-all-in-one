@@ -283,6 +283,7 @@ $gray_900: #161c24;
     gap: 8px;
     button {
         @extend ._s_btn;
+        transition: 0s !important;
 
         svg {
             width: 15px;
@@ -297,6 +298,7 @@ $gray_900: #161c24;
         &._s_active_page {
             border-color: rgb(0, 54, 233) !important;
             background: rgba(0, 54, 233, 0.06) !important;
+            transition: 0s !important;
         }
 
         &:disabled {

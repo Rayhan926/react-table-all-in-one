@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import Table from './react-table/Table';
+import './react-table/table.scss';
 
 const columns = [
     {
@@ -85,18 +87,29 @@ const columns = [
 ];
 
 function App() {
+    const [page, setPage] = useState(1)
     return (
-        <Table
-            url='http://localhost:3005/api/admin/orders'
-            columns={columns}
-            select={(res) => {
-                return {
-                    data: res.data.orders,
-                    totalData: res.data.order_count,
-                };
-            }}
-            selectErrorMessage={(err) => JSON.parse(err).message}
-        />
+        <>
+            <Table
+                url='http://localhost:3005/api/admin/orders'
+                columns={columns}
+                select={(res) => {
+                    return {
+                        data: res.data.orders,
+                        totalData: res.data.order_count,
+                    };
+                }}
+                selectErrorMessage={(err) => JSON.parse(err).message}
+            />
+            {/* <p>Page {page}</p>
+            <Pagination
+                count={10}
+                siblingCount={2}
+                boundaryCount={1}
+                page={page}
+                onChange={(page) => setPage(page)}
+            /> */}
+        </>
     );
 }
 

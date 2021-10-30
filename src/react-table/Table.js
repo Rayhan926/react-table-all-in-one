@@ -221,9 +221,10 @@ function Table({
                 {totalDataCount > 0 && (
                     <Pagination
                         count={Math.ceil(totalDataCount / rowsPerPage)}
+                        // count={12}
                         page={page}
                         onChange={onPageChangeHandler}
-                        boundaryCount={5}
+                        boundaryCount={2}
                     />
                 )}
                 {/* Pagination ----End---- */}
