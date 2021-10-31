@@ -40,7 +40,6 @@ function Pagination({
         for (let i = from; i <= to; i++) {
             newArray.push(i)
         }
-        console.log(newArray);
         return newArray
     }
 
@@ -50,50 +49,57 @@ function Pagination({
         const startPage = 1; // Start Page
         const startPageSQ = startPage + startPage
         const siblingSQ = siblingCount + siblingCount
+        const boundarySQ = boundaryCount + boundaryCount
         const firstPortionLength = siblingSQ + boundaryCount + startPageSQ
 
-        let firstPortion = [];
-        let middlePortion = [];
-        let lastPortion = [];
+        let firstPortion;
 
-        const f = page + siblingCount > firstPortionLength // "f" means when start creating middle portion of pagination
+        const f = page + siblingCount >= firstPortionLength + 1
 
         if (f) {
-            firstPortion = boundaryCount ? arrayRange(startPage, boundaryCount) : []
+            firstPortion = arrayRange(startPage, boundaryCount)
         } else {
-            firstPortion = arrayRange(startPage, firstPortionLength)
+            firstPortion = arrayRange(
+                startPage,
+                firstPortionLength <= count ? firstPortionLength : count
+            )
         }
+
+        let middlePortion = f ?
+            arrayRange(page - siblingCount, page + siblingCount) :
+            [firstPortionLength < count ? '...' : null]
+
+        let lastPortion = firstPortion.length < count ? arrayRange(
+            (count + 1) - boundaryCount,
+            count
+        ) : []
+
+        // if (last(firstPortion) + 2 <= lastPortion[0]) {
+        //     firstPortion.push('...')
+        // }
+
+        const lastOfMiddle = last(middlePortion)
+        // if (lastOfMiddle + 2 <= lastPortion[0]) {
+        //     middlePortion.push('...')
+        // }
 
         if (f) {
-            middlePortion = siblingCount ? arrayRange(page - siblingCount, page + siblingCount) : [page]
-        }
-        lastPortion = boundaryCount ? arrayRange((count + startPage) - boundaryCount, count) : []
-
-        let limit = (count - (boundaryCount ? (boundaryCount + startPage) : startPage) - siblingCount)
-
-        if (page >= limit) {
-            middlePortion = []
-            lastPortion = arrayRange(limit - siblingCount, count)
-        }
-
-        let allArrays = [...firstPortion, ...middlePortion, ...lastPortion]
-        if (allArrays.length >= count) {
-            return [...new Set(allArrays)]
-        }
-
-        if (middlePortion.length) {
             middlePortion.unshift('...')
             middlePortion.push('...')
-        } else if (page >= limit) {
-            lastPortion.unshift('...')
-        } else {
-            firstPortion.push('...')
         }
 
+        if (lastOfMiddle + 2 >= lastPortion[0]) {
+            middlePortion = ['...']
+            lastPortion = arrayRange(count - (siblingSQ + boundarySQ), count)
+        }
+
+        console.log(arrayRange(count - (siblingSQ + boundarySQ), count));
+        console.log(lastPortion);
+        // console.log(firstPortion.length, '<', count, '=', lastPortion);
+        console.log(firstPortion, middlePortion, lastPortion);
+
         return [...firstPortion, ...middlePortion, ...lastPortion]
-
     }, [count, boundaryCount, siblingCount, page])
-
 
     return (
         <div className="_s_pagination_btn_wrapper">

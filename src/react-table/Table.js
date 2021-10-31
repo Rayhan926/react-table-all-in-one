@@ -220,11 +220,12 @@ function Table({
                 {/* Pagination ----Start---- */}
                 {totalDataCount > 0 && (
                     <Pagination
-                        count={Math.ceil(totalDataCount / rowsPerPage)}
-                        // count={12}
+                        // count={Math.ceil(totalDataCount / rowsPerPage)}
+                        count={10}
                         page={page}
                         onChange={onPageChangeHandler}
-                        boundaryCount={2}
+                        boundaryCount={1}
+                        siblingCount={1}
                     />
                 )}
                 {/* Pagination ----End---- */}
