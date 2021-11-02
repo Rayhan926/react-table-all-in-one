@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import './pagination.scss';
 
 function Pagination({
     count = 5,
@@ -40,47 +41,57 @@ function Pagination({
         for (let i = from; i <= to; i++) {
             newArray.push(i)
         }
-        console.log(newArray);
         return newArray
     }
-
-    const last = (arr) => arr[arr.length - 1]
 
     const paginationArray = useMemo(() => {
         const startPage = 1; // Start Page
         const startPageSQ = startPage + startPage
         const siblingSQ = siblingCount + siblingCount
-        const firstPortionLength = siblingSQ + boundaryCount + startPageSQ
+        let firstPortionLength = siblingSQ + boundaryCount + startPageSQ
 
         let firstPortion = [];
         let middlePortion = [];
         let lastPortion = [];
 
-        const f = page + siblingCount > firstPortionLength // "f" means when start creating middle portion of pagination
 
-        if (f) {
+        // this calculation check that sibling part of pagination should genarate or not eg: ['...', 4, 5, 6, '...']
+        const siblingPortion = page + siblingCount > firstPortionLength
+
+        /**
+         * this calculation check that last part of pagination should genarate or not.
+         * if true then what will be the limit
+         * eg: ['...', 8, 9, 10]
+         */
+        let limit = (count - (boundaryCount ? (boundaryCount + startPage) : startPage) - siblingCount)
+
+        if (siblingPortion) {
             firstPortion = boundaryCount ? arrayRange(startPage, boundaryCount) : []
         } else {
             firstPortion = arrayRange(startPage, firstPortionLength)
         }
 
-        if (f) {
+        if (siblingPortion && page < limit) {
             middlePortion = siblingCount ? arrayRange(page - siblingCount, page + siblingCount) : [page]
         }
-        lastPortion = boundaryCount ? arrayRange((count + startPage) - boundaryCount, count) : []
-
-        let limit = (count - (boundaryCount ? (boundaryCount + startPage) : startPage) - siblingCount)
 
         if (page >= limit) {
             middlePortion = []
             lastPortion = arrayRange(limit - siblingCount, count)
+        } else {
+            lastPortion = boundaryCount ? arrayRange((count + startPage) - boundaryCount, count) : []
         }
 
+        // Binding all array of blocks
         let allArrays = [...firstPortion, ...middlePortion, ...lastPortion]
+
+        // Checking if total genarated pages is bigger then the 'count' limit
+        // if limit exceded then return array, range from 'startPage' to 'count'
         if (allArrays.length >= count) {
-            return [...new Set(allArrays)]
+            return arrayRange(startPage, count)
         }
 
+        // Adding ellipsis
         if (middlePortion.length) {
             middlePortion.unshift('...')
             middlePortion.push('...')
@@ -90,6 +101,7 @@ function Pagination({
             firstPortion.push('...')
         }
 
+        // finally return the actual pagination array
         return [...firstPortion, ...middlePortion, ...lastPortion]
 
     }, [count, boundaryCount, siblingCount, page])
@@ -118,7 +130,7 @@ function Pagination({
             {/* Go to page button ----Start---- */}
             {paginationArray.map((currentPage, i) => {
                 if (!currentPage) return null;
-                // if (currentPage === '...') return currentPage
+                if (currentPage === '...') return <span key={i} className="_s_pagination_ellipsis">{currentPage}</span>
                 return (
                     <button
                         className={page === currentPage ? '_s_active_page' : ''}

@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import Pagination from './react-table/Pagination';
-import './react-table/table.scss';
+import Table from './react-table/Table';
 
 const columns = [
     {
@@ -90,24 +89,16 @@ function App() {
     const [page, setPage] = useState(1)
     return (
         <>
-            {/* <Table
+            <Table
                 url='http://localhost:3005/api/admin/orders'
                 columns={columns}
                 select={(res) => {
                     return {
-                        data: res.data.orders,
-                        totalData: res.data.order_count,
+                        data: res.data.data.orders,
+                        totalData: res.data.data.order_count,
                     };
                 }}
-                selectErrorMessage={(err) => JSON.parse(err).message}
-            /> */}
-            <p>Page {page}</p>
-            <Pagination
-                count={200}
-                boundaryCount={2}
-                siblingCount={1}
-                page={page}
-                onChange={(page) => setPage(page)}
+                selectErrorMessage={(err) => err?.response?.data?.message}
             />
         </>
     );

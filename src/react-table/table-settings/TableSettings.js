@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
-import { reactTableContext } from '../Table';
+import { useEffect, useState } from 'react';
 import Collapsible from './Collapsible';
+import ColumnShowHideMove from './ColumnShowHideMove';
 
 function TableSettings() {
-    const { allColumns, setHiddenColumns } = useContext(reactTableContext);
     const [open, setOpen] = useState(false);
     /**
      *
@@ -17,9 +16,9 @@ function TableSettings() {
     const closeOnOutsideClick = (e) => {
         if (e.target.id === '_s_overly_wrapper') closeOverlyHandler();
     };
-    const checkBoxOnChangeHandler = (e) => {
-        e.target.checked && setHiddenColumns(e.target.value);
-    };
+    // const checkBoxOnChangeHandler = (e) => {
+    //     e.target.checked && setHiddenColumns(e.target.value);
+    // };
 
     useEffect(() => {
         document.addEventListener('click', closeOnOutsideClick);
@@ -54,23 +53,16 @@ function TableSettings() {
                     {/* Overly Header ----Start---- */}
                     <div className='_s_overly_header'>
                         <h3>React Table</h3>
-                        <button type='button' onClick={closeOverlyHandler}>
-                            X
-                        </button>
+                        <div className="_s_close_overly_btn" onClick={closeOverlyHandler}>
+                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="1.2em" width="1.2em" xmlns="http://www.w3.org/2000/svg"><path d="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"></path></svg>
+                        </div>
                     </div>
                     {/* Overly Header ----End---- */}
 
                     {/* Overly Body ----End---- */}
                     <div className='_s_overly_body'>
                         <Collapsible header='Hide column'>
-                            {allColumns?.map((column, i) => (
-                                <div key={i}>
-                                    <label>
-                                        <input {...column.getToggleHiddenProps()} type='checkbox' />
-                                        {column.Header}
-                                    </label>
-                                </div>
-                            ))}
+                            <ColumnShowHideMove />
                         </Collapsible>
                     </div>
                     {/* Overly Body ----End---- */}

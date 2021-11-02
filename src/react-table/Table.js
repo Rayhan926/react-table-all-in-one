@@ -1,8 +1,9 @@
+import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useTable } from 'react-table';
+import { useColumnOrder, useTable } from 'react-table';
 import ErrorIndicator from './ErrorIndicator';
 import LoadingIndicator from './LoadingIndicator';
-import Pagination from './Pagination';
+import Pagination from './Pagination/index';
 import './table.scss';
 import TableHeader from './TableHeader';
 import TableTopBar from './TableTopBar';
@@ -26,13 +27,14 @@ function Table({
     const setBlankInitialStates = () => {
         const defaultBlankStates = {
             initialHiddenColumns: [],
+            initialColumnOrder: [],
         };
         localStorage.setItem(tableId, JSON.stringify(defaultBlankStates));
         return localStorage.getItem(tableId);
     };
 
     const initialStatesInJSON = localStorage.getItem(tableId) || setBlankInitialStates();
-    const { initialHiddenColumns } = JSON.parse(initialStatesInJSON);
+    const { initialHiddenColumns, initialColumnOrder } = JSON.parse(initialStatesInJSON);
 
     const rowsPerPageHandler = (e) => {
         const value = e.target.value;
@@ -94,29 +96,18 @@ function Table({
 
         setLoading(true);
         setErrorLoadingData(false);
-        fetch(finalUrl, {
-            method: 'get',
+        axios.get(finalUrl).then((res) => {
+            const { data, totalData } = select(res);
+            setTotalDataCount(totalData);
+            setTableData(data);
+
         })
-            .then((res) => {
-                if (!res.ok) {
-                    return res.text().then(text => { throw new Error(text) })
-                }
-                else {
-                    return res.json();
-                }
-            })
-            .then((res) => {
-
-                const { data, totalData } = select(res);
-                setTotalDataCount(totalData);
-                setTableData(data);
-
-            })
             .catch((err) => {
+                console.log(err);
                 setTableData([])
                 setErrorLoadingData(
                     (typeof selectErrorMessage === 'function' &&
-                        selectErrorMessage(err.message).toString()) ||
+                        selectErrorMessage(err)) ||
                     'Something went wrong')
             })
             .finally(() => setLoading(false));
@@ -140,8 +131,9 @@ function Table({
         columns: tableColumns,
         initialState: {
             hiddenColumns: initialHiddenColumns,
+            columnOrder: initialColumnOrder
         },
-    }); // tableInstance from userTable hook
+    }, useColumnOrder);
 
     // Distructuring table tableInstance Object
     const {
@@ -153,18 +145,20 @@ function Table({
         allColumns,
         state,
         setHiddenColumns,
+        setColumnOrder
     } = tableInstance;
 
-    const { hiddenColumns } = state;
+    const { hiddenColumns, columnOrder } = state;
 
     useEffect(() => {
         localStorage.setItem(
             tableId,
             JSON.stringify({
                 initialHiddenColumns: hiddenColumns,
+                initialColumnOrder: columnOrder
             })
         );
-    }, [hiddenColumns, tableId]);
+    }, [hiddenColumns, columnOrder, tableId]);
     return (
         <div className='_s_react_table_wrapper'>
             {/* Table Top Search Bar and Setting ----Start---- */}
@@ -177,6 +171,7 @@ function Table({
                     setSearchParams,
                     setHiddenColumns,
                     setPage,
+                    setColumnOrder
                 }}
             >
                 <TableTopBar />
@@ -220,12 +215,11 @@ function Table({
                 {/* Pagination ----Start---- */}
                 {totalDataCount > 0 && (
                     <Pagination
-                        // count={Math.ceil(totalDataCount / rowsPerPage)}
-                        count={10}
+                        count={Math.ceil(totalDataCount / rowsPerPage)}
                         page={page}
                         onChange={onPageChangeHandler}
-                        boundaryCount={1}
-                        siblingCount={1}
+                        boundaryCount={2}
+                        siblingCount={2}
                     />
                 )}
                 {/* Pagination ----End---- */}

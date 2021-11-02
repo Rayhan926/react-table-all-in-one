@@ -1,22 +1,11 @@
 // @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap');
-
+@import './variable';
 @mixin flex_center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
-
-$fff: #ffffff;
-$gray_100: #f9fafb;
-$gray_200: #f4f6f8;
-$gray_300: #dfe3e8;
-$gray_400: #c4cdd5;
-$gray_500: #919eab;
-$gray_600: #637381;
-$gray_700: #454f5b;
-$gray_800: #212b36;
-$gray_900: #161c24;
 
 // -------- React Table Global Class Start --------
 ._s_btn {
@@ -172,15 +161,30 @@ $gray_900: #161c24;
         flex-direction: column;
 
         ._s_overly_header {
-            border-bottom: 1px solid $gray_100;
-            padding: 15px 20px;
+            border-bottom: 1px solid $gray_200;
+            padding: 10px 15px;
             color: #111;
             flex-shrink: 0;
+            @include flex_center();
+            justify-content: space-between;
 
             h3 {
                 font-size: 18px;
                 line-height: 22px;
                 margin: 0;
+            }
+
+            ._s_close_overly_btn {
+                background: $gray_200;
+                padding: 8px;
+                cursor: pointer;
+                line-height: 0;
+                border-radius: 4px;
+                color: $gray_700;
+
+                &:hover {
+                    background: $gray_300;
+                }
             }
         }
 
@@ -276,38 +280,6 @@ $gray_900: #161c24;
     }
 }
 // -------- React Table Global Search End --------
-
-// -------- React Table Pagination Start --------
-._s_pagination_btn_wrapper {
-    display: flex;
-    gap: 8px;
-    button {
-        @extend ._s_btn;
-        transition: 0s !important;
-
-        svg {
-            width: 15px;
-            height: 15px;
-            transform: scale(1.1);
-        }
-
-        &:hover {
-            background: $gray_200;
-        }
-
-        &._s_active_page {
-            border-color: rgb(0, 54, 233) !important;
-            background: rgba(0, 54, 233, 0.06) !important;
-            transition: 0s !important;
-        }
-
-        &:disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-    }
-}
-// -------- React Table Pagination End --------
 
 // -------- React Table Error Indicator Start --------
 ._s_table_error_indicator_wrapper,
@@ -426,6 +398,55 @@ $gray_900: #161c24;
 }
 
 // -------- React Table Loader End --------
+
+// -------- React Table Column Show Hide Setting Start --------
+._s_column_show_hide_list {
+    font-family: 'Public Sans', sans-serif;
+    @include flex_center();
+    justify-content: space-between;
+    z-index: 999999999;
+    // opacity: 1 !important;
+    // visibility: visible !important;
+    position: relative;
+    background: $fff;
+
+    &:hover {
+        background: $gray_200;
+    }
+
+    input {
+        margin-right: 10px;
+    }
+
+    label {
+        flex-grow: 1;
+        display: block;
+        flex-shrink: 1;
+        cursor: pointer;
+        padding: 10px 15px;
+        padding-right: 0;
+        user-select: none;
+        min-height: 40px;
+        @include flex_center();
+        justify-content: flex-start;
+        font-size: 16px;
+        color: $gray_800;
+    }
+
+    ._s_drag_handler {
+        cursor: grab;
+        padding: 0 15px;
+        color: $gray_600;
+        min-height: 40px;
+        @include flex_center();
+        flex-shrink: 0;
+
+        &:hover {
+            background: $gray_300;
+        }
+    }
+}
+// -------- React Table Column Show Hide Setting End --------
 
 // -------- React Table Setting Start --------
 // -------- React Table Setting End --------
