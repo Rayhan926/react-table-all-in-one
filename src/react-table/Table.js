@@ -3,7 +3,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useColumnOrder, useTable } from 'react-table';
 import ErrorIndicator from './ErrorIndicator';
 import LoadingIndicator from './LoadingIndicator';
-import Pagination from './Pagination/index';
+import NoResultIndicator from './NoResultIndicator';
+import Pagination from './Pagination';
+import ColumnShowHideMove from './table-settings/ColumnShowHideMove';
 import './table.scss';
 import TableHeader from './TableHeader';
 import TableTopBar from './TableTopBar';
@@ -119,13 +121,6 @@ function Table({
         dataFetcher();
     }, [url, searchParams]);
 
-    // useEffect(() => {
-    //     const pageCount = Math.ceil(totalDataCount / rowsPerPage);
-    //     if (page > pageCount) {
-    //         setPage(pageCount);
-    //     }
-    // }, [totalDataCount, rowsPerPage, page]);
-
     const tableInstance = useTable({
         data: tableData,
         columns: tableColumns,
@@ -139,15 +134,14 @@ function Table({
     const {
         getTableProps,
         getTableBodyProps,
+        getToggleHideAllColumnsProps,
         prepareRow,
         headerGroups,
         rows,
-        allColumns,
         state,
-        setHiddenColumns,
-        setColumnOrder
+        allColumns,
+        visibleColumns,
     } = tableInstance;
-
     const { hiddenColumns, columnOrder } = state;
 
     useEffect(() => {
@@ -159,20 +153,22 @@ function Table({
             })
         );
     }, [hiddenColumns, columnOrder, tableId]);
+
+    // Context api data
+    const contextApiData = {
+        searchParams,
+        queryString,
+        pageString,
+        setPage,
+        setSearchParams,
+        tableInstance
+    }
+
     return (
         <div className='_s_react_table_wrapper'>
             {/* Table Top Search Bar and Setting ----Start---- */}
             <reactTableContext.Provider
-                value={{
-                    searchParams,
-                    queryString,
-                    pageString,
-                    allColumns,
-                    setSearchParams,
-                    setHiddenColumns,
-                    setPage,
-                    setColumnOrder
-                }}
+                value={contextApiData}
             >
                 <TableTopBar />
             </reactTableContext.Provider>
@@ -191,6 +187,19 @@ function Table({
                         <td colSpan="100%">
                             {loading && <LoadingIndicator data={tableData} />}
                             {errorLoadingData && <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />}
+                            {!loading && !errorLoadingData && tableData?.length <= 0 && <NoResultIndicator />}
+
+                            {/* All Columns Hidden Warning */}
+                            {
+                                tableData?.length > 0 && visibleColumns?.length === 0 && allColumns?.length !== 0 && (
+                                    <div className="all_column_hidden_indicator">
+                                        <div className="all_column_hidden_indicator_scroller" >
+                                            <h3>All column is hidden</h3>
+                                            <ColumnShowHideMove table_instance={tableInstance} />
+                                        </div>
+                                    </div>
+                                )
+                            }
 
                         </td>
                     </tr>

@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import Table from './react-table/Table';
+import Table from "./react-table/Table";
 
 const columns = [
     {
@@ -43,11 +42,11 @@ const columns = [
     //     accessor: 'product_id',
     // },
     {
-        Header: 'phone',
+        Header: 'Phone',
         accessor: 'phone',
     },
     {
-        Header: 'status',
+        Header: 'Status',
         accessor: 'status',
     },
     {
@@ -86,7 +85,6 @@ const columns = [
 ];
 
 function App() {
-    const [page, setPage] = useState(1)
     return (
         <>
             <Table

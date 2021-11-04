@@ -2,9 +2,16 @@ import { arrayMoveImmutable } from 'array-move';
 import { useContext, useState } from 'react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { reactTableContext } from '../Table';
+import TableCheckbox from '../TableCheckbox';
 
-function ColumnShowHideMove() {
-    const { allColumns, setColumnOrder } = useContext(reactTableContext);
+function ColumnShowHideMove({ table_instance }) {
+    console.log(table_instance);
+    // table instance context api
+    const tableContext = useContext(reactTableContext);
+
+    // distructuring table instance
+    const { visibleColumns, allColumns, setColumnOrder, getToggleHideAllColumnsProps } = table_instance || tableContext.tableInstance
+
     const columnIds = allColumns.map(column => column.id)
     const [items, setItems] = useState(columnIds)
 
@@ -17,8 +24,17 @@ function ColumnShowHideMove() {
         });
     }
 
+    const { indeterminate } = getToggleHideAllColumnsProps()
+    const is_indeterminate = (indeterminate === 0 || indeterminate === false) ? undefined : true
+
     return (
         <div style={{ padding: "6px 0" }}>
+            <div className="_s_column_show_hide_list">
+                <label tabIndex={0}>
+                    <TableCheckbox className="_s_cstm_table_checkbox" indeterminate={is_indeterminate} {...getToggleHideAllColumnsProps()} />
+                    <p>{`${visibleColumns.length === allColumns.length ? 'Hide' : 'Show'} all columns`}</p>
+                </label>
+            </div>
             <SortableList
                 axis="y"
                 lockAxis="y"
@@ -26,6 +42,7 @@ function ColumnShowHideMove() {
                 allColumns={allColumns}
                 onSortEnd={sortEndHandler}
                 useDragHandle
+                helperClass="dragging_element"
             />
         </div>
     )
@@ -46,7 +63,7 @@ const SortableItem = SortableElement(({ column }) => {
     return (
         <div className="_s_column_show_hide_list">
             <label tabIndex={0}>
-                <input {...column.getToggleHiddenProps()} type='checkbox' />
+                <TableCheckbox className="_s_cstm_table_checkbox" {...column.getToggleHiddenProps()} />
                 <p>{column.Header}</p>
             </label>
             <DragHandle />

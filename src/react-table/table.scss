@@ -47,7 +47,7 @@
 
     // -------- Table Header Start --------
     thead {
-        background: $gray_100;
+        background: $gray_300;
         font-weight: 700;
 
         th {
@@ -62,7 +62,7 @@
         position: relative;
         tr {
             &:nth-child(even) {
-                background: #f1f1ff93;
+                background: $gray_100;
             }
         }
         td {
@@ -141,10 +141,11 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     @include flex_center();
-    z-index: 999999999;
+    z-index: 2;
     opacity: 0;
     pointer-events: none;
     transition: 0.2s ease-in-out;
+    z-index: 9999999999;
 
     &._s_open_overly {
         opacity: 1;
@@ -159,11 +160,12 @@
         max-height: 95vh;
         display: flex;
         flex-direction: column;
+        position: relative;
 
         ._s_overly_header {
             border-bottom: 1px solid $gray_200;
             padding: 10px 15px;
-            color: #111;
+            color: $gray_900;
             flex-shrink: 0;
             @include flex_center();
             justify-content: space-between;
@@ -213,7 +215,7 @@
     ._s_table_subtitle {
         margin: 0;
         font-size: 16px;
-        color: #444;
+        color: $gray_600;
         line-height: 22px;
     }
     ._s_topbar_global_search_and_table_setting_wrapper {
@@ -234,7 +236,7 @@
     ._s_global_search_input {
         font-size: 16px;
         font-weight: 500;
-        color: #222;
+        color: $gray_800;
         border: 1px solid $gray_400;
         padding: 8px 13px;
         padding-right: 40px;
@@ -281,9 +283,10 @@
 }
 // -------- React Table Global Search End --------
 
-// -------- React Table Error Indicator Start --------
+// -------- React Table Indicator Start --------
 ._s_table_error_indicator_wrapper,
-._s_table_loading_indicator_wrapper {
+._s_table_loading_indicator_wrapper,
+._s_no_result_indicator {
     @include flex_center();
     flex-direction: column;
     padding: 0 20px;
@@ -336,7 +339,36 @@
         }
     }
 }
-// -------- React Table Error Indicator End --------
+
+._s_no_result_indicator {
+    h4 {
+        color: $gray_800;
+        font-size: 22px;
+    }
+}
+
+.all_column_hidden_indicator {
+    @include flex_center();
+    flex-direction: column;
+    padding: 30px 20px;
+    min-height: 350px;
+
+    .all_column_hidden_indicator_scroller {
+        min-width: 350px;
+        // max-height: 400px;
+        overflow: hidden;
+        overflow-y: auto;
+        border: 1px solid $gray_300;
+        border-radius: 6px;
+
+        h3 {
+            padding: 15px 12px;
+            font-size: 18px;
+            border-bottom: 1px solid $gray_300;
+        }
+    }
+}
+// -------- React Table Indicator End --------
 
 // -------- React Table Loader Start --------
 
@@ -404,21 +436,17 @@
     font-family: 'Public Sans', sans-serif;
     @include flex_center();
     justify-content: space-between;
-    z-index: 999999999;
-    // opacity: 1 !important;
-    // visibility: visible !important;
-    position: relative;
     background: $fff;
 
     &:hover {
         background: $gray_200;
     }
 
-    input {
+    ._s_cstm_table_checkbox {
         margin-right: 10px;
     }
 
-    label {
+    & > label {
         flex-grow: 1;
         display: block;
         flex-shrink: 1;
@@ -444,6 +472,10 @@
         &:hover {
             background: $gray_300;
         }
+    }
+
+    &.dragging_element {
+        z-index: 9999999999;
     }
 }
 // -------- React Table Column Show Hide Setting End --------
