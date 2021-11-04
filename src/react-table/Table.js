@@ -20,11 +20,24 @@ function Table({
     pageString = 'page',
     limitString = 'limit',
     queryString = 'q',
-    tableId = 'react_table',
+    tableId,
     select,
-    selectErrorMessage
+    selectErrorMessage,
+    tableTitle = "Table title",
+    tableSubTitle = "",
+    setData,
+    // Paginations options
+    boundaryCount,
+    siblingCount,
+    hideFirstButton,
+    hideLastButton,
+    hidePrevButton,
+    hideNextButton,
 }) {
     if (!url) throw new Error('url property is required to fetch the data');
+    if (!tableId) throw new Error('An unique table id is required');
+
+    console.log('Hi');
 
     const setBlankInitialStates = () => {
         const defaultBlankStates = {
@@ -84,12 +97,6 @@ function Table({
     const dataFetcher = () => {
         const finalUrl = new URL(url);
 
-        // searchParams.forEach((searchParam, index) => {
-        //     if (searchParam[1]) {
-        //         finalUrl.searchParams.append(searchParam[0], searchParam[1]);
-        //     }
-        // });
-
         Object.keys(searchParams).forEach((key) => {
             if (searchParams[key]) {
                 finalUrl.searchParams.append(key, searchParams[key]);
@@ -102,11 +109,17 @@ function Table({
             const { data, totalData } = select(res);
             setTotalDataCount(totalData);
             setTableData(data);
+            setData({
+                data,
+                total: totalData
+
+            })
 
         })
             .catch((err) => {
                 console.log(err);
                 setTableData([])
+                setData({})
                 setErrorLoadingData(
                     (typeof selectErrorMessage === 'function' &&
                         selectErrorMessage(err)) ||
@@ -161,7 +174,9 @@ function Table({
         pageString,
         setPage,
         setSearchParams,
-        tableInstance
+        tableInstance,
+        tableTitle,
+        tableSubTitle
     }
 
     return (
@@ -222,15 +237,18 @@ function Table({
             {/* Table Pagination and rows per page section ----Start---- */}
             <div className='_s_pagination_and_rows_per_page_wrapper'>
                 {/* Pagination ----Start---- */}
-                {totalDataCount > 0 && (
-                    <Pagination
-                        count={Math.ceil(totalDataCount / rowsPerPage)}
-                        page={page}
-                        onChange={onPageChangeHandler}
-                        boundaryCount={2}
-                        siblingCount={2}
-                    />
-                )}
+                <Pagination
+                    count={Math.ceil(totalDataCount / rowsPerPage)}
+                    page={page}
+                    onChange={onPageChangeHandler}
+
+                    boundaryCount={boundaryCount}
+                    siblingCount={siblingCount}
+                    hideFirstButton={hideFirstButton}
+                    hideLastButton={hideLastButton}
+                    hidePrevButton={hidePrevButton}
+                    hideNextButton={hideNextButton}
+                />
                 {/* Pagination ----End---- */}
 
                 {/* Rows per page ----Start---- */}

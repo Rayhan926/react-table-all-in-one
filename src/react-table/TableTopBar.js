@@ -1,13 +1,16 @@
+import { useContext } from 'react';
+import { reactTableContext } from './Table';
 import TableSettings from './table-settings/TableSettings';
 import TableGlobalSearch from './TableGlobalSearch';
 
 function TableTopBar() {
+    const { tableTitle, tableSubTitle } = useContext(reactTableContext);
     return (
         <div className='_s_table_topbar'>
             {/* Table Title and Subtitle ----Start---- */}
             <div>
-                <h3 className='_s_table_title'>React table</h3>
-                <p className='_s_table_subtitle'>A powerfull all in one table</p>
+                {tableTitle && <h3 className='_s_table_title'>{tableTitle}</h3>}
+                {tableSubTitle && <p className='_s_table_subtitle'>{tableSubTitle}</p>}
             </div>
             {/* Table Title and Subtitle ----Starend---- */}
             {/* Table Global Search and Setting Modal Toggle Button ----Start---- */}

@@ -61,7 +61,7 @@
     tbody {
         position: relative;
         tr {
-            &:nth-child(even) {
+            &:nth-child(odd) {
                 background: $gray_100;
             }
         }
@@ -71,6 +71,7 @@
 
         ._s_table_indicator_tr,
         ._s_table_indicator_tr td {
+            background: #fff !important;
             padding: 0 !important;
             margin: 0 !important;
         }

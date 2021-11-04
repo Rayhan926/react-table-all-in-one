@@ -5,7 +5,6 @@ import { reactTableContext } from '../Table';
 import TableCheckbox from '../TableCheckbox';
 
 function ColumnShowHideMove({ table_instance }) {
-    console.log(table_instance);
     // table instance context api
     const tableContext = useContext(reactTableContext);
 
@@ -18,7 +17,6 @@ function ColumnShowHideMove({ table_instance }) {
     const sortEndHandler = ({ oldIndex, newIndex }) => {
         setItems(prevItems => {
             const newColumnOrder = arrayMoveImmutable(prevItems, oldIndex, newIndex)
-            console.log(newColumnOrder);
             setColumnOrder(newColumnOrder)
             return newColumnOrder
         });
