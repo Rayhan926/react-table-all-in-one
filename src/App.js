@@ -1,6 +1,6 @@
-import { useState } from "react";
-import Pagination from "./react-table/Pagination";
-import Table from "./react-table/Table";
+import axios from 'axios';
+import { useState } from 'react';
+import Table from './react-table/Table';
 
 const columns = [
     {
@@ -87,28 +87,25 @@ const columns = [
 ];
 
 function App() {
-    const [page, setPage] = useState({})
+    const [page, setPage] = useState({});
     return (
         <>
             <Table
-                tableTitle="Users"
-                tableSubTitle={page.total ? `Total ${page?.total}` : '...'}
                 tableId='users_table'
-                url='http://localhost:3005/api/admin/orders'
+                tableTitle='Users'
                 columns={columns}
-                select={(res) => {
-                    return {
-                        data: res.data.data.orders,
-                        totalData: res.data.data.order_count,
-                    };
+                fetch={async (q) => {
+                    try {
+                        const res = await axios.get(`http://localhost:3005/api/admin/orders?${q}`);
+                        return {
+                            data: res.data.data.orders,
+                            totalData: res.data.data.order_count,
+                        };
+                    } catch (err) {
+                        return err?.response?.data?.message;
+                    }
                 }}
-                selectErrorMessage={(err) => err?.response?.data?.message}
-                setData={setPage}
-                rowsPerPageOptions={[1, 2, 3, 4, 5]}
-                rowsPerPageDefaultValue={2}
             />
-            {/* <p>{page}</p>
-            <Pagination page={page} onChange={currPage => setPage(currPage)} /> */}
         </>
     );
 }

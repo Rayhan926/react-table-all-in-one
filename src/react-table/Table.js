@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useColumnOrder, useTable } from 'react-table';
 import ErrorIndicator from './ErrorIndicator';
@@ -14,18 +13,15 @@ export const reactTableContext = React.createContext();
 
 function Table({
     columns = [],
-    url,
     rowsPerPageOptions = [5, 10, 20, 50],
     rowsPerPageDefaultValue = 10,
     pageString = 'page',
     limitString = 'limit',
     queryString = 'q',
     tableId,
-    select,
-    selectErrorMessage,
-    tableTitle = "Table title",
-    tableSubTitle = "",
-    setData,
+    tableTitle = 'Table title',
+    tableSubTitle = '',
+    fetch,
     // Paginations options
     boundaryCount,
     siblingCount,
@@ -34,10 +30,7 @@ function Table({
     hidePrevButton,
     hideNextButton,
 }) {
-    if (!url) throw new Error('url property is required to fetch the data');
     if (!tableId) throw new Error('An unique table id is required');
-
-    console.log('Hi');
 
     const setBlankInitialStates = () => {
         const defaultBlankStates = {
@@ -78,7 +71,7 @@ function Table({
             : rowsPerPageOptions[0];
     }, [rowsPerPageDefaultValue, rowsPerPageOptions]);
 
-    const [loading, setLoading] = useState(url ? true : false); // Loading table data state
+    const [loading, setLoading] = useState(false); // Loading table data state
     const [errorLoadingData, setErrorLoadingData] = useState(false); // Error loading table data state
     const [rowsPerPage, setRowsPerPage] = useState(_rowsPerPageDefaultValue); // Rows per page state
     const [tableData, setTableData] = useState([]); // Table data state
@@ -91,63 +84,55 @@ function Table({
 
     const tableColumns = useMemo(() => columns, [columns]); // Table columns state
 
-    // const tableData = useMemo(() => data, [data]);
-
     // Data Fetcher Function ----Start----
-    const dataFetcher = () => {
-        const finalUrl = new URL(url);
-
-        Object.keys(searchParams).forEach((key) => {
+    const dataFetcher = async () => {
+        let binSearchParams = '';
+        Object.keys(searchParams).forEach((key, index) => {
             if (searchParams[key]) {
-                finalUrl.searchParams.append(key, searchParams[key]);
+                binSearchParams += `${key}=${searchParams[key]}${
+                    index + 1 !== Object.keys(searchParams).length ? '&' : ''
+                }`;
             }
         });
 
         setLoading(true);
         setErrorLoadingData(false);
-        axios.get(finalUrl).then((res) => {
-            const { data, totalData } = select(res);
-            setTotalDataCount(totalData);
-            setTableData(data);
-            setData({
-                data,
-                total: totalData
 
-            })
-
-        })
-            .catch((err) => {
-                console.log(err);
-                setTableData([])
-                setData({})
-                setErrorLoadingData(
-                    (typeof selectErrorMessage === 'function' &&
-                        selectErrorMessage(err)) ||
-                    'Something went wrong')
-            })
-            .finally(() => setLoading(false));
+        const result = await fetch(binSearchParams, searchParams);
+        if (result.data) {
+            setTableData(result.data);
+            setTotalDataCount(result.totalData);
+        } else {
+            setTableData([]);
+            setErrorLoadingData(
+                result && typeof result === 'string' ? result : 'Something went wrong'
+            );
+        }
+        setLoading(false);
     };
     // Data Fetcher Function ----End----
 
     // Calling the fetcher function to load api data
     useEffect(() => {
         dataFetcher();
-    }, [url, searchParams]);
+    }, [searchParams]);
 
-    const tableInstance = useTable({
-        data: tableData,
-        columns: tableColumns,
-        initialState: {
-            hiddenColumns: initialHiddenColumns,
-            columnOrder: initialColumnOrder
+    const tableInstance = useTable(
+        {
+            data: tableData,
+            columns: tableColumns,
+            initialState: {
+                hiddenColumns: initialHiddenColumns,
+                columnOrder: initialColumnOrder,
+            },
         },
-    }, useColumnOrder);
+        useColumnOrder
+    );
 
     // Distructuring table tableInstance Object
     const {
         getTableProps,
         getTableBodyProps,
-        getToggleHideAllColumnsProps,
         prepareRow,
         headerGroups,
         rows,
@@ -162,7 +147,7 @@ function Table({
             tableId,
             JSON.stringify({
                 initialHiddenColumns: hiddenColumns,
-                initialColumnOrder: columnOrder
+                initialColumnOrder: columnOrder,
             })
         );
     }, [hiddenColumns, columnOrder, tableId]);
@@ -176,15 +161,13 @@ function Table({
         setSearchParams,
         tableInstance,
         tableTitle,
-        tableSubTitle
-    }
+        tableSubTitle,
+    };
 
     return (
         <div className='_s_react_table_wrapper'>
             {/* Table Top Search Bar and Setting ----Start---- */}
-            <reactTableContext.Provider
-                value={contextApiData}
-            >
+            <reactTableContext.Provider value={contextApiData}>
                 <TableTopBar />
             </reactTableContext.Provider>
             {/* Table Top Search Bar and Setting ----End---- */}
@@ -198,24 +181,27 @@ function Table({
                 {/* Table Body ----Start---- */}
                 <tbody {...getTableBodyProps()}>
                     {/* {(errorLoadingData || loading) && ( */}
-                    <tr className="_s_table_indicator_tr" >
-                        <td colSpan="100%">
+                    <tr className='_s_table_indicator_tr'>
+                        <td colSpan='100%'>
                             {loading && <LoadingIndicator data={tableData} />}
-                            {errorLoadingData && <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />}
-                            {!loading && !errorLoadingData && tableData?.length <= 0 && <NoResultIndicator />}
+                            {errorLoadingData && (
+                                <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />
+                            )}
+                            {!loading && !errorLoadingData && tableData?.length <= 0 && (
+                                <NoResultIndicator />
+                            )}
 
                             {/* All Columns Hidden Warning */}
-                            {
-                                tableData?.length > 0 && visibleColumns?.length === 0 && allColumns?.length !== 0 && (
-                                    <div className="all_column_hidden_indicator">
-                                        <div className="all_column_hidden_indicator_scroller" >
+                            {tableData?.length > 0 &&
+                                visibleColumns?.length === 0 &&
+                                allColumns?.length !== 0 && (
+                                    <div className='all_column_hidden_indicator'>
+                                        <div className='all_column_hidden_indicator_scroller'>
                                             <h3>All column is hidden</h3>
                                             <ColumnShowHideMove table_instance={tableInstance} />
                                         </div>
                                     </div>
-                                )
-                            }
-
+                                )}
                         </td>
                     </tr>
                     {/* )} */}
@@ -241,7 +227,6 @@ function Table({
                     count={Math.ceil(totalDataCount / rowsPerPage)}
                     page={page}
                     onChange={onPageChangeHandler}
-
                     boundaryCount={boundaryCount}
                     siblingCount={siblingCount}
                     hideFirstButton={hideFirstButton}
@@ -252,16 +237,32 @@ function Table({
                 {/* Pagination ----End---- */}
 
                 {/* Rows per page ----Start---- */}
-                <label className="_s_rows_per_page_select_wrapper">
-                    <select defaultValue={rowsPerPage} onChange={rowsPerPageHandler} className="_s_rows_per_page_select">
+                <label className='_s_rows_per_page_select_wrapper'>
+                    <select
+                        defaultValue={rowsPerPage}
+                        onChange={rowsPerPageHandler}
+                        className='_s_rows_per_page_select'
+                    >
                         {rowsPerPageOptions.map((option, index) => (
                             <option value={option} key={index}>
                                 {option}
                             </option>
                         ))}
                     </select>
-                    <div className="_s_select_arrow_wrapper">
-                        <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <div className='_s_select_arrow_wrapper'>
+                        <svg
+                            stroke='currentColor'
+                            fill='none'
+                            strokeWidth='2'
+                            viewBox='0 0 24 24'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            height='1em'
+                            width='1em'
+                            xmlns='http://www.w3.org/2000/svg'
+                        >
+                            <polyline points='6 9 12 15 18 9'></polyline>
+                        </svg>
                     </div>
                 </label>
                 {/* Rows per page ----End---- */}

@@ -4,7 +4,7 @@ import { reactTableContext } from './Table';
 function TableGlobalSearch() {
     const { queryString, setSearchParams, setPage, searchParams, pageString } =
         useContext(reactTableContext);
-    const [inputValue, setInputValue] = useState(searchParams[queryString] || '')
+    const [inputValue, setInputValue] = useState(searchParams[queryString] || '');
 
     const globalSearchHandler = (e) => {
         e.preventDefault();
@@ -12,6 +12,7 @@ function TableGlobalSearch() {
         if (!inputValue?.trim()) return;
 
         setSearchParams((prevState) => {
+            if (prevState[queryString] === inputValue) return prevState; // Preventing unwanted network request
             return {
                 ...prevState,
                 [queryString]: inputValue,
@@ -22,7 +23,7 @@ function TableGlobalSearch() {
     };
 
     const clearSearch = () => {
-        setInputValue('')
+        setInputValue('');
         setSearchParams((prevState) => {
             delete prevState[queryString];
             return {
@@ -34,11 +35,11 @@ function TableGlobalSearch() {
     };
 
     const inputOnChangeHandler = (e) => {
-        const value = e.target.value
+        const value = e.target.value;
 
-        if (value.length <= 0 && searchParams[queryString]) clearSearch()
-        else setInputValue(value)
-    }
+        if (value.length <= 0 && searchParams[queryString]) clearSearch();
+        else setInputValue(value);
+    };
 
     return (
         <>
