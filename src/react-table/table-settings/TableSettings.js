@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { reactTableContext } from '../Table';
 import Collapsible from './Collapsible';
 import ColumnShowHideMove from './ColumnShowHideMove';
 
 function TableSettings() {
-    const { tableTitle, tableSubTitle } = useContext(reactTableContext);
+    const { tableTitle } = useContext(reactTableContext);
 
     const [open, setOpen] = useState(false);
     /**
@@ -16,9 +16,9 @@ function TableSettings() {
     const closeOverlyHandler = () => {
         setOpen(false);
     };
-    const closeOnOutsideClick = (e) => {
+    const closeOnOutsideClick = useCallback((e) => {
         if (e.target.id === '_s_overly_wrapper') closeOverlyHandler();
-    };
+    }, []);
     // const checkBoxOnChangeHandler = (e) => {
     //     e.target.checked && setHiddenColumns(e.target.value);
     // };
@@ -28,7 +28,7 @@ function TableSettings() {
         return () => {
             document.removeEventListener('click', closeOnOutsideClick);
         };
-    }, []);
+    }, [closeOnOutsideClick]);
     return (
         <>
             <div onClick={openOverlyHandler} className='_s_setting_modal_toggle_wrapper'>
@@ -56,15 +56,25 @@ function TableSettings() {
                     {/* Overly Header ----Start---- */}
                     <div className='_s_overly_header'>
                         {tableTitle && <h3>{tableTitle}</h3>}
-                        <div className="_s_close_overly_btn" onClick={closeOverlyHandler}>
-                            <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="1.2em" width="1.2em" xmlns="http://www.w3.org/2000/svg"><path d="M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z"></path></svg>
+                        <div className='_s_close_overly_btn' onClick={closeOverlyHandler}>
+                            <svg
+                                stroke='currentColor'
+                                fill='currentColor'
+                                strokeWidth='0'
+                                viewBox='0 0 512 512'
+                                height='1.2em'
+                                width='1.2em'
+                                xmlns='http://www.w3.org/2000/svg'
+                            >
+                                <path d='M405 136.798L375.202 107 256 226.202 136.798 107 107 136.798 226.202 256 107 375.202 136.798 405 256 285.798 375.202 405 405 375.202 285.798 256z'></path>
+                            </svg>
                         </div>
                     </div>
                     {/* Overly Header ----End---- */}
 
                     {/* Overly Body ----End---- */}
                     <div className='_s_overly_body'>
-                        <Collapsible header='Hide column'>
+                        <Collapsible header='Hide & order column'>
                             <ColumnShowHideMove />
                         </Collapsible>
                     </div>

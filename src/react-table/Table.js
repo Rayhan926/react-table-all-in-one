@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useColumnOrder, useTable } from 'react-table';
 import ErrorIndicator from './ErrorIndicator';
 import LoadingIndicator from './LoadingIndicator';
@@ -85,7 +85,7 @@ function Table({
     const tableColumns = useMemo(() => columns, [columns]); // Table columns state
 
     // Data Fetcher Function ----Start----
-    const dataFetcher = async () => {
+    const dataFetcher = useCallback(async () => {
         let binSearchParams = '';
         Object.keys(searchParams).forEach((key, index) => {
             if (searchParams[key]) {
@@ -101,7 +101,7 @@ function Table({
         const result = await fetch(binSearchParams, searchParams);
         if (result.data) {
             setTableData(result.data);
-            setTotalDataCount(result.totalData);
+            setTotalDataCount(result.total);
         } else {
             setTableData([]);
             setErrorLoadingData(
@@ -109,13 +109,13 @@ function Table({
             );
         }
         setLoading(false);
-    };
+    }, [fetch, searchParams]);
     // Data Fetcher Function ----End----
 
     // Calling the fetcher function to load api data
     useEffect(() => {
         dataFetcher();
-    }, [searchParams]);
+    }, [searchParams, dataFetcher]);
 
     const tableInstance = useTable(
         {

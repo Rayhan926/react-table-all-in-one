@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useState } from 'react';
 import Table from './react-table/Table';
 
 const columns = [
@@ -87,7 +86,6 @@ const columns = [
 ];
 
 function App() {
-    const [page, setPage] = useState({});
     return (
         <>
             <Table
@@ -99,7 +97,7 @@ function App() {
                         const res = await axios.get(`http://localhost:3005/api/admin/orders?${q}`);
                         return {
                             data: res.data.data.orders,
-                            totalData: res.data.data.order_count,
+                            total: res.data.data.order_count,
                         };
                     } catch (err) {
                         return err?.response?.data?.message;
