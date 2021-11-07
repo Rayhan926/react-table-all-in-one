@@ -45,14 +45,13 @@ function Table({
     const { initialHiddenColumns, initialColumnOrder } = JSON.parse(initialStatesInJSON);
 
     const rowsPerPageHandler = (e) => {
-        const value = e.target.value;
-        const checkPageLimit = Math.ceil(parseInt(totalDataCount) / parseInt(value));
+        const rowsPerPageState = e.target.value;
+        const checkPageLimit = Math.ceil(parseInt(totalDataCount) / parseInt(rowsPerPageState));
         if (checkPageLimit < page) {
             onPageChangeHandler(checkPageLimit);
         }
-        setRowsPerPage(value);
         setSearchParams((prevState) => {
-            return { ...prevState, [limitString]: value };
+            return { ...prevState, [limitString]: rowsPerPageState };
         });
     };
 
@@ -73,12 +72,11 @@ function Table({
 
     const [loading, setLoading] = useState(false); // Loading table data state
     const [errorLoadingData, setErrorLoadingData] = useState(false); // Error loading table data state
-    const [rowsPerPage, setRowsPerPage] = useState(_rowsPerPageDefaultValue); // Rows per page state
     const [tableData, setTableData] = useState([]); // Table data state
     const [totalDataCount, setTotalDataCount] = useState(null); // Table data state
     const [page, setPage] = useState(1);
     const [searchParams, setSearchParams] = useState({
-        [limitString]: rowsPerPage,
+        [limitString]: _rowsPerPageDefaultValue,
         [pageString]: page,
     });
 
@@ -224,7 +222,7 @@ function Table({
             <div className='_s_pagination_and_rows_per_page_wrapper'>
                 {/* Pagination ----Start---- */}
                 <Pagination
-                    count={Math.ceil(totalDataCount / rowsPerPage)}
+                    count={Math.ceil(totalDataCount / searchParams[limitString])}
                     page={page}
                     onChange={onPageChangeHandler}
                     boundaryCount={boundaryCount}
@@ -239,7 +237,7 @@ function Table({
                 {/* Rows per page ----Start---- */}
                 <label className='_s_rows_per_page_select_wrapper'>
                     <select
-                        defaultValue={rowsPerPage}
+                        defaultValue={searchParams[limitString]}
                         onChange={rowsPerPageHandler}
                         className='_s_rows_per_page_select'
                     >

@@ -85,25 +85,22 @@ const columns = [
     // },
 ];
 
+const dataFetcher = async (q) => {
+    try {
+        const res = await axios.get(`http://localhost:3005/api/admin/orders?${q}`);
+        return {
+            data: res.data.data.orders,
+            total: res.data.data.order_count,
+        };
+    } catch (err) {
+        return err?.response?.data?.message;
+    }
+};
+
 function App() {
     return (
         <>
-            <Table
-                tableId='users_table'
-                tableTitle='Users'
-                columns={columns}
-                fetch={async (q) => {
-                    try {
-                        const res = await axios.get(`http://localhost:3005/api/admin/orders?${q}`);
-                        return {
-                            data: res.data.data.orders,
-                            total: res.data.data.order_count,
-                        };
-                    } catch (err) {
-                        return err?.response?.data?.message;
-                    }
-                }}
-            />
+            <Table tableId='users_table' tableTitle='Users' columns={columns} fetch={dataFetcher} />
         </>
     );
 }

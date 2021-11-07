@@ -1,5 +1,5 @@
 import { arrayMoveImmutable } from 'array-move';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SortableContainer, SortableElement, SortableHandle } from 'react-sortable-hoc';
 import { reactTableContext } from '../Table';
 import TableCheckbox from '../TableCheckbox';
@@ -13,17 +13,15 @@ function ColumnShowHideMove({ table_instance }) {
         table_instance || tableContext.tableInstance;
 
     const columnIds = allColumns.map((column) => column.id);
-    const [sortHandler, setSortHandler] = useState(null);
-    const [previousColumns] = useState(columnIds);
+    const [items, setItems] = useState(columnIds);
 
-    useEffect(() => {
-        if (sortHandler) {
-            const { oldIndex, newIndex } = sortHandler;
-            const newColumnOrder = arrayMoveImmutable(previousColumns, oldIndex, newIndex);
+    const sortEndHandler = ({ oldIndex, newIndex }) => {
+        setItems((prevItems) => {
+            const newColumnOrder = arrayMoveImmutable(prevItems, oldIndex, newIndex);
             setColumnOrder(newColumnOrder);
             return newColumnOrder;
-        }
-    }, [sortHandler, previousColumns, setColumnOrder]);
+        });
+    };
 
     const { indeterminate } = getToggleHideAllColumnsProps();
     const is_indeterminate = indeterminate === 0 || indeterminate === false ? undefined : true;
@@ -45,9 +43,9 @@ function ColumnShowHideMove({ table_instance }) {
             <SortableList
                 axis='y'
                 lockAxis='y'
-                items={columnIds}
+                items={items}
                 allColumns={allColumns}
-                onSortEnd={setSortHandler}
+                onSortEnd={sortEndHandler}
                 useDragHandle
                 helperClass='dragging_element'
             />

@@ -71,7 +71,7 @@
 
         ._s_table_indicator_tr,
         ._s_table_indicator_tr td {
-            background: #fff !important;
+            background: $fff !important;
             padding: 0 !important;
             margin: 0 !important;
         }
@@ -326,7 +326,7 @@
     ._s_try_again_btn {
         padding: 10px 16px;
         border-radius: 4px;
-        background: rgb(0, 77, 243);
+        background: $primary_100;
         color: $fff;
         border: none;
         outline: none;
@@ -336,7 +336,7 @@
         letter-spacing: 0.5px;
 
         &:hover {
-            background: rgb(0, 57, 179);
+            background: $primary_200;
         }
     }
 }
