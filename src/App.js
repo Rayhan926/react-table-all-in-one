@@ -85,6 +85,26 @@ const columns = [
     // },
 ];
 
+const todosColumns = [
+    {
+        Header: 'Id',
+        accessor: 'id',
+    },
+    {
+        Header: 'User id',
+        accessor: 'userId',
+    },
+    {
+        Header: 'Title',
+        accessor: 'title',
+    },
+    {
+        Header: 'Completed',
+        accessor: 'completed',
+        Cell: (e) => (e ? 'Yes' : 'No'),
+    },
+];
+
 const dataFetcher = async (q) => {
     try {
         const res = await axios.get(`http://localhost:3005/api/admin/orders?${q}`);
@@ -97,10 +117,49 @@ const dataFetcher = async (q) => {
     }
 };
 
+const fetchTodos = async (q, d) => {
+    try {
+        console.log(d);
+        const res = await axios.get(
+            `https://jsonplaceholder.typicode.com/todos?_start=${(d.page - 1) * d.limit}&_limit=${
+                d.limit
+            }`
+        );
+        const result = res.data;
+
+        return {
+            data: result,
+        };
+    } catch (error) {
+        return error?.response?.data?.message;
+    }
+};
+
 function App() {
     return (
         <>
-            <Table tableId='users_table' tableTitle='Users' columns={columns} fetch={dataFetcher} />
+            <Table
+                tableId='users_table'
+                tableTitle='Users'
+                columns={columns}
+                fetch={dataFetcher}
+                // url='http://localhost:3005/api/admin/orders'
+                // selectData={(res) => {
+                //     return {
+                //         data: res.data.data.orders,
+                //         total: res.data.data.order_count,
+                //     };
+                // }}
+                // selectError={() => 'Saymon'}
+            />
+            {/* <Table
+                tableId='todos_table'
+                // tableTitle='Todos'
+                columns={todosColumns}
+                disableGlobalSearch
+                fetch={fetchTodos}
+                rowsPerPageDefaultValue={5}
+            /> */}
         </>
     );
 }

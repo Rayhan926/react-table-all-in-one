@@ -55,7 +55,7 @@ function TableSettings() {
                 <div className='_s_overly_content_wrapper'>
                     {/* Overly Header ----Start---- */}
                     <div className='_s_overly_header'>
-                        {tableTitle && <h3>{tableTitle}</h3>}
+                        {<h3>{tableTitle || 'Settings'}</h3>}
                         <div className='_s_close_overly_btn' onClick={closeOverlyHandler}>
                             <svg
                                 stroke='currentColor'

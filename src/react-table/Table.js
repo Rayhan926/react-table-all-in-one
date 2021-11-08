@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useColumnOrder, useTable } from 'react-table';
 import ErrorIndicator from './ErrorIndicator';
@@ -19,10 +20,17 @@ function Table({
     limitString = 'limit',
     queryString = 'q',
     tableId,
-    tableTitle = 'Table title',
+    tableTitle,
     tableSubTitle = '',
     fetch,
+    url,
+    selectData,
+    selectError,
     // Paginations options
+    disableGlobalSearch,
+    disableRowsPerPage,
+    disablePagination,
+    disableSetting,
     boundaryCount,
     siblingCount,
     hideFirstButton,
@@ -45,6 +53,7 @@ function Table({
     const { initialHiddenColumns, initialColumnOrder } = JSON.parse(initialStatesInJSON);
 
     const rowsPerPageHandler = (e) => {
+        if (disableRowsPerPage) return;
         const rowsPerPageState = e.target.value;
         const checkPageLimit = Math.ceil(parseInt(totalDataCount) / parseInt(rowsPerPageState));
         if (checkPageLimit < page) {
@@ -96,10 +105,24 @@ function Table({
         setLoading(true);
         setErrorLoadingData(false);
 
-        const result = await fetch(binSearchParams, searchParams);
-        if (result.data) {
+        let result;
+
+        if (fetch && typeof fetch === 'function') {
+            result = await fetch(binSearchParams, searchParams);
+        } else {
+            try {
+                result = await axios(`${url}?${binSearchParams}`).then((res) => selectData(res));
+            } catch (error) {
+                if (selectError && typeof selectError === 'function') return selectError(error);
+                return null;
+            }
+        }
+
+        // const result = await fetch(binSearchParams, searchParams);
+
+        if (result?.data) {
             setTableData(result.data);
-            setTotalDataCount(result.total);
+            setTotalDataCount(result?.total);
         } else {
             setTableData([]);
             setErrorLoadingData(
@@ -160,111 +183,134 @@ function Table({
         tableInstance,
         tableTitle,
         tableSubTitle,
+        disableGlobalSearch,
+        disableSetting,
+        loading,
     };
 
     return (
         <div className='_s_react_table_wrapper'>
             {/* Table Top Search Bar and Setting ----Start---- */}
-            <reactTableContext.Provider value={contextApiData}>
-                <TableTopBar />
-            </reactTableContext.Provider>
+            {(tableTitle || !disableGlobalSearch || !disableSetting) && (
+                <reactTableContext.Provider value={contextApiData}>
+                    <TableTopBar />
+                </reactTableContext.Provider>
+            )}
             {/* Table Top Search Bar and Setting ----End---- */}
 
             {/* Table ----Start---- */}
-            <table {...getTableProps()} className='_s_react_table'>
-                {/* Table Header ----Start---- */}
-                <TableHeader headerGroups={headerGroups} />
-                {/* Table Header ----End---- */}
+            <div className='_s_table_wrapper'>
+                <table {...getTableProps()} className='_s_react_table'>
+                    {/* Table Header ----Start---- */}
+                    <TableHeader headerGroups={headerGroups} />
+                    {/* Table Header ----End---- */}
 
-                {/* Table Body ----Start---- */}
-                <tbody {...getTableBodyProps()}>
-                    {/* {(errorLoadingData || loading) && ( */}
-                    <tr className='_s_table_indicator_tr'>
-                        <td colSpan='100%'>
-                            {loading && <LoadingIndicator data={tableData} />}
-                            {errorLoadingData && (
-                                <ErrorIndicator error={errorLoadingData} retryFunc={dataFetcher} />
-                            )}
-                            {!loading && !errorLoadingData && tableData?.length <= 0 && (
-                                <NoResultIndicator />
-                            )}
-
-                            {/* All Columns Hidden Warning */}
-                            {tableData?.length > 0 &&
-                                visibleColumns?.length === 0 &&
-                                allColumns?.length !== 0 && (
-                                    <div className='all_column_hidden_indicator'>
-                                        <div className='all_column_hidden_indicator_scroller'>
-                                            <h3>All column is hidden</h3>
-                                            <ColumnShowHideMove table_instance={tableInstance} />
-                                        </div>
-                                    </div>
+                    {/* Table Body ----Start---- */}
+                    <tbody {...getTableBodyProps()}>
+                        {/* {(errorLoadingData || loading) && ( */}
+                        <tr className='_s_table_indicator_tr'>
+                            <td colSpan='100%'>
+                                {loading && <LoadingIndicator data={tableData} />}
+                                {errorLoadingData && (
+                                    <ErrorIndicator
+                                        error={errorLoadingData}
+                                        retryFunc={dataFetcher}
+                                    />
                                 )}
-                        </td>
-                    </tr>
-                    {/* )} */}
-                    {rows.map((row) => {
-                        prepareRow(row);
-                        return (
-                            <tr {...row.getRowProps()}>
-                                {row.cells.map((cell) => {
-                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
-                                })}
-                            </tr>
-                        );
-                    })}
-                </tbody>
-                {/* Table Body ----End---- */}
-            </table>
+                                {!loading && !errorLoadingData && tableData?.length <= 0 && (
+                                    <NoResultIndicator />
+                                )}
+
+                                {/* All Columns Hidden Warning */}
+                                {tableData?.length > 0 &&
+                                    visibleColumns?.length === 0 &&
+                                    allColumns?.length !== 0 && (
+                                        <div className='all_column_hidden_indicator'>
+                                            <div className='all_column_hidden_indicator_scroller'>
+                                                <h3>All column is hidden</h3>
+                                                <ColumnShowHideMove
+                                                    table_instance={tableInstance}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                            </td>
+                        </tr>
+                        {/* )} */}
+                        {rows.map((row) => {
+                            prepareRow(row);
+                            return (
+                                <tr {...row.getRowProps()}>
+                                    {row.cells.map((cell) => {
+                                        return (
+                                            <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                    {/* Table Body ----End---- */}
+                </table>
+            </div>
             {/* Table ----End---- */}
 
             {/* Table Pagination and rows per page section ----Start---- */}
-            <div className='_s_pagination_and_rows_per_page_wrapper'>
-                {/* Pagination ----Start---- */}
-                <Pagination
-                    count={Math.ceil(totalDataCount / searchParams[limitString])}
-                    page={page}
-                    onChange={onPageChangeHandler}
-                    boundaryCount={boundaryCount}
-                    siblingCount={siblingCount}
-                    hideFirstButton={hideFirstButton}
-                    hideLastButton={hideLastButton}
-                    hidePrevButton={hidePrevButton}
-                    hideNextButton={hideNextButton}
-                />
-                {/* Pagination ----End---- */}
+            {(!disablePagination || !disableRowsPerPage) && (
+                <div className='_s_pagination_and_rows_per_page_wrapper'>
+                    {/* Pagination ----Start---- */}
+                    {!disablePagination && (
+                        <Pagination
+                            count={Math.ceil(totalDataCount / searchParams[limitString])}
+                            page={page}
+                            onChange={onPageChangeHandler}
+                            boundaryCount={boundaryCount}
+                            siblingCount={siblingCount}
+                            hideFirstButton={hideFirstButton}
+                            hideLastButton={hideLastButton}
+                            hidePrevButton={hidePrevButton}
+                            hideNextButton={hideNextButton}
+                        />
+                    )}
+                    {/* Pagination ----End---- */}
 
-                {/* Rows per page ----Start---- */}
-                <label className='_s_rows_per_page_select_wrapper'>
-                    <select
-                        defaultValue={searchParams[limitString]}
-                        onChange={rowsPerPageHandler}
-                        className='_s_rows_per_page_select'
-                    >
-                        {rowsPerPageOptions.map((option, index) => (
-                            <option value={option} key={index}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                    <div className='_s_select_arrow_wrapper'>
-                        <svg
-                            stroke='currentColor'
-                            fill='none'
-                            strokeWidth='2'
-                            viewBox='0 0 24 24'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            height='1em'
-                            width='1em'
-                            xmlns='http://www.w3.org/2000/svg'
+                    {/* Rows per page ----Start---- */}
+                    {!disableRowsPerPage && (
+                        <label
+                            className='_s_rows_per_page_select_wrapper'
+                            style={{ ...(disablePagination && { marginLeft: 'auto' }) }}
                         >
-                            <polyline points='6 9 12 15 18 9'></polyline>
-                        </svg>
-                    </div>
-                </label>
-                {/* Rows per page ----End---- */}
-            </div>
+                            <select
+                                defaultValue={searchParams[limitString]}
+                                onChange={rowsPerPageHandler}
+                                className='_s_rows_per_page_select'
+                            >
+                                {rowsPerPageOptions.map((option, index) => (
+                                    <option value={option} key={index}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className='_s_select_arrow_wrapper'>
+                                <svg
+                                    stroke='currentColor'
+                                    fill='none'
+                                    strokeWidth='2'
+                                    viewBox='0 0 24 24'
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    height='1em'
+                                    width='1em'
+                                    xmlns='http://www.w3.org/2000/svg'
+                                >
+                                    <polyline points='6 9 12 15 18 9'></polyline>
+                                </svg>
+                            </div>
+                        </label>
+                    )}
+                    {/* Rows per page ----End---- */}
+                </div>
+            )}
             {/* Table Pagination and rows per page section ----End---- */}
         </div>
     );
