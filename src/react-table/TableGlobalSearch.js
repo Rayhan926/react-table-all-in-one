@@ -55,7 +55,7 @@ function TableGlobalSearch() {
 
                     {loading && searchParams[queryString] ? (
                         <div className='_s_clear_global_search_wrapper loading_search_indicator'>
-                            <div class='lds-dual-ring'></div>
+                            <div className='lds-dual-ring'></div>
                         </div>
                     ) : searchParams[queryString] ? (
                         <div className='_s_clear_global_search_wrapper' onClick={clearSearch}>

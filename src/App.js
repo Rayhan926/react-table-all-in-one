@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useCallback, useState } from 'react';
 import Table from './react-table/Table';
 
 const columns = [
@@ -117,28 +118,30 @@ const dataFetcher = async (q) => {
     }
 };
 
-const fetchTodos = async (q, d) => {
-    try {
-        console.log(d);
-        const res = await axios.get(
-            `https://jsonplaceholder.typicode.com/todos?_start=${(d.page - 1) * d.limit}&_limit=${
-                d.limit
-            }`
-        );
-        const result = res.data;
-
-        return {
-            data: result,
-        };
-    } catch (error) {
-        return error?.response?.data?.message;
-    }
-};
-
 function App() {
+    const [todos, setSodos] = useState([]);
+
+    const fetchTodos = useCallback(async (q, d) => {
+        try {
+            const res = await axios.get(
+                `https://jsonplaceholder.typicode.com/todos?_start=${
+                    (d.page - 1) * d.limit
+                }&_limit=${d.limit}`
+            );
+            const result = res.data;
+            setSodos(result);
+
+            return {
+                data: result,
+            };
+        } catch (error) {
+            return error?.response?.data?.message;
+        }
+    }, []);
+
     return (
         <>
-            <Table
+            {/* <Table
                 tableId='users_table'
                 tableTitle='Users'
                 columns={columns}
@@ -151,15 +154,14 @@ function App() {
                 //     };
                 // }}
                 // selectError={() => 'Saymon'}
-            />
-            {/* <Table
+            /> */}
+            <Table
                 tableId='todos_table'
-                // tableTitle='Todos'
+                tableTitle='Todos'
                 columns={todosColumns}
-                disableGlobalSearch
                 fetch={fetchTodos}
                 rowsPerPageDefaultValue={5}
-            /> */}
+            />
         </>
     );
 }

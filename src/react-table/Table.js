@@ -54,7 +54,7 @@ function Table({
 
     const rowsPerPageHandler = (e) => {
         if (disableRowsPerPage) return;
-        const rowsPerPageState = e.target.value;
+        const rowsPerPageState = parseInt(e.target.value);
         const checkPageLimit = Math.ceil(parseInt(totalDataCount) / parseInt(rowsPerPageState));
         if (checkPageLimit < page) {
             onPageChangeHandler(checkPageLimit);
@@ -105,10 +105,14 @@ function Table({
         setLoading(true);
         setErrorLoadingData(false);
 
+        const states = {
+            ...searchParams,
+        };
+
         let result;
 
         if (fetch && typeof fetch === 'function') {
-            result = await fetch(binSearchParams, searchParams);
+            result = await fetch(binSearchParams, states);
         } else {
             try {
                 result = await axios(`${url}?${binSearchParams}`).then((res) => selectData(res));
@@ -130,7 +134,7 @@ function Table({
             );
         }
         setLoading(false);
-    }, [fetch, searchParams]);
+    }, [fetch, searchParams, selectData, selectError, url]);
     // Data Fetcher Function ----End----
 
     // Calling the fetcher function to load api data
