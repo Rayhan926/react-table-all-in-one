@@ -121,7 +121,7 @@ const todosColumns = [
 function App() {
     const fetchTodos = useCallback(async (q, d) => {
         try {
-            console.log(d);
+            // console.log(q, d);
             const res = await axios.get(
                 `https://jsonplaceholder.typicode.com/todos?_start=${
                     (d.page - 1) * d.limit
@@ -131,7 +131,7 @@ function App() {
 
             return {
                 data: result,
-                // total: 200,
+                total: 200,
             };
         } catch (error) {
             return error?.response?.data?.message;
@@ -162,8 +162,10 @@ function App() {
             >
                 <Table
                     tableId='todos_table'
-                    tableTitle='Todos Table'
+                    tableTitle='Todos'
                     columns={todosColumns}
+                    siblingCount={1}
+                    boundaryCount={2}
                     fetch={fetchTodos}
                     globalSearchPlaceholder='Search todos'
                 />

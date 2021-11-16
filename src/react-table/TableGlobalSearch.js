@@ -10,13 +10,16 @@ function TableGlobalSearch() {
         pageString,
         loading,
         globalSearchPlaceholder,
+        CustomGlobalSearch,
+        addSearchParam,
+        removeSearchParam,
     } = useContext(reactTableContext);
     const [inputValue, setInputValue] = useState(searchParams[queryString] || '');
 
     const [showMobileSearch, setShowMobileSearch] = useState(false);
     const globalInputRef = useRef(null);
 
-    const closeMobileSearch = (clearValue) => {
+    const closeMobileSearchModal = (clearValue) => {
         clearValue && setInputValue('');
         setShowMobileSearch(false);
     };
@@ -29,29 +32,14 @@ function TableGlobalSearch() {
         }, 100);
 
         if (!inputValue?.trim()) return;
-        closeMobileSearch();
+        closeMobileSearchModal();
 
-        setSearchParams((prevState) => {
-            if (prevState[queryString] === inputValue) return prevState; // Preventing unwanted network request
-            return {
-                ...prevState,
-                [queryString]: inputValue,
-                [pageString]: 1,
-            };
-        });
-        setPage(1);
+        addSearchParam(queryString, inputValue);
     };
 
     const clearSearch = () => {
         setInputValue('');
-        setSearchParams((prevState) => {
-            delete prevState[queryString];
-            return {
-                ...prevState,
-                [pageString]: 1,
-            };
-        });
-        setPage(1);
+        removeSearchParam(queryString);
     };
 
     const inputOnChangeHandler = (e) => {
@@ -63,6 +51,12 @@ function TableGlobalSearch() {
 
     return (
         <>
+            {CustomGlobalSearch && (
+                <CustomGlobalSearch
+                    addSearchParam={addSearchParam}
+                    removeSearchParam={removeSearchParam}
+                />
+            )}
             <div
                 className={`_s_global_search_container ${
                     showMobileSearch ? '_s_show_mobile_search_modal' : ''
@@ -73,7 +67,7 @@ function TableGlobalSearch() {
                         {/* Close Search Modal -- Visible in mobile */}
                         <div
                             className='_s_close_search_modal'
-                            onClick={() => closeMobileSearch(true)}
+                            onClick={() => closeMobileSearchModal(true)}
                         >
                             <svg
                                 stroke='currentColor'

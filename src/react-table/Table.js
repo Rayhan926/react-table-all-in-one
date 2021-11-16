@@ -37,6 +37,7 @@ function Table({
     hideLastButton,
     hidePrevButton,
     hideNextButton,
+    CustomGlobalSearch,
 }) {
     if (!tableId) throw new Error('An unique table id is required');
 
@@ -70,6 +71,31 @@ function Table({
         setSearchParams((prevState) => {
             return { ...prevState, [pageString]: currentPage };
         });
+    };
+
+    // For adding extra search param from outside oof the component
+    const addSearchParam = (searchParamKey, searchParamValue) => {
+        setSearchParams((prevState) => {
+            if (prevState[searchParamKey] === searchParamValue) return prevState; // Preventing unwanted network request
+            return {
+                ...prevState,
+                [searchParamKey]: searchParamValue,
+                [pageString]: 1,
+            };
+        });
+        setPage(1);
+    };
+
+    // For removing extra search param from outside oof the component
+    const removeSearchParam = (searchParamKey) => {
+        setSearchParams((prevState) => {
+            delete prevState[searchParamKey];
+            return {
+                ...prevState,
+                [pageString]: 1,
+            };
+        });
+        setPage(1);
     };
 
     // Rows per page default value
@@ -128,10 +154,14 @@ function Table({
             setTableData(result.data);
             setTotalDataCount(result?.total);
         } else {
+            const errorMessage =
+                result && typeof result === 'string'
+                    ? result
+                    : !window.navigator.onLine
+                    ? 'You are offline.'
+                    : 'Something went wrong';
             setTableData([]);
-            setErrorLoadingData(
-                result && typeof result === 'string' ? result : 'Something went wrong'
-            );
+            setErrorLoadingData(errorMessage);
         }
         setLoading(false);
     }, [fetch, searchParams, selectData, selectError, url]);
@@ -184,6 +214,8 @@ function Table({
         pageString,
         setPage,
         setSearchParams,
+        addSearchParam,
+        removeSearchParam,
         tableInstance,
         tableTitle,
         tableSubTitle,
@@ -191,6 +223,7 @@ function Table({
         disableSetting,
         loading,
         globalSearchPlaceholder,
+        CustomGlobalSearch,
     };
 
     return (

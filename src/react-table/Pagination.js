@@ -113,6 +113,8 @@ function Pagination({
         return [...firstPortion, ...middlePortion, ...lastPortion];
     }, [count, boundaryCount, siblingCount, page, hasCount]);
 
+    console.log(paginationArray);
+
     return (
         <div className='_s_pagination_btn_wrapper'>
             {/* First page button ----Start---- */}
