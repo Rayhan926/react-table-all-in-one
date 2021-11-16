@@ -133,6 +133,7 @@ function App() {
 
             return {
                 data: result,
+                total: 200,
             };
         } catch (error) {
             return error?.response?.data?.message;
@@ -157,7 +158,7 @@ function App() {
             /> */}
             <Table
                 tableId='todos_table'
-                tableTitle='Todos'
+                tableTitle='Todos Table'
                 columns={todosColumns}
                 fetch={fetchTodos}
                 rowsPerPageDefaultValue={5}

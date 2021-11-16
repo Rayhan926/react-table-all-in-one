@@ -9,6 +9,7 @@
 // -------- React Table Pagination Start --------
 ._s_pagination_btn_wrapper {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
     button {
         font-size: 13px;
