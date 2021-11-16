@@ -121,6 +121,7 @@ const todosColumns = [
 function App() {
     const fetchTodos = useCallback(async (q, d) => {
         try {
+            console.log(d);
             const res = await axios.get(
                 `https://jsonplaceholder.typicode.com/todos?_start=${
                     (d.page - 1) * d.limit
@@ -130,7 +131,7 @@ function App() {
 
             return {
                 data: result,
-                total: 200,
+                // total: 200,
             };
         } catch (error) {
             return error?.response?.data?.message;
@@ -153,13 +154,20 @@ function App() {
                 // }}
                 // selectError={() => 'Saymon'}
             /> */}
-            <Table
-                tableId='todos_table'
-                tableTitle='Todos Table'
-                columns={todosColumns}
-                fetch={fetchTodos}
-                rowsPerPageDefaultValue={5}
-            />
+            <div
+                style={{
+                    width: '90%',
+                    margin: '50px auto',
+                }}
+            >
+                <Table
+                    tableId='todos_table'
+                    tableTitle='Todos Table'
+                    columns={todosColumns}
+                    fetch={fetchTodos}
+                    globalSearchPlaceholder='Search todos'
+                />
+            </div>
         </>
     );
 }

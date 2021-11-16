@@ -38,8 +38,8 @@
         }
 
         &._s_active_page {
-            border-color: rgb(0, 54, 233) !important;
-            background: rgba(0, 54, 233, 0.06) !important;
+            border-color: $primary_100 !important;
+            background: $primary_light !important;
         }
 
         &:disabled {

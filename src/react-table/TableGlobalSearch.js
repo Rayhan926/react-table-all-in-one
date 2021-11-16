@@ -2,15 +2,22 @@ import { useContext, useRef, useState } from 'react';
 import { reactTableContext } from './Table';
 
 function TableGlobalSearch() {
-    const { queryString, setSearchParams, setPage, searchParams, pageString, loading } =
-        useContext(reactTableContext);
+    const {
+        queryString,
+        setSearchParams,
+        setPage,
+        searchParams,
+        pageString,
+        loading,
+        globalSearchPlaceholder,
+    } = useContext(reactTableContext);
     const [inputValue, setInputValue] = useState(searchParams[queryString] || '');
 
     const [showMobileSearch, setShowMobileSearch] = useState(false);
     const globalInputRef = useRef(null);
 
-    const closeMobileSearch = () => {
-        setInputValue('');
+    const closeMobileSearch = (clearValue) => {
+        clearValue && setInputValue('');
         setShowMobileSearch(false);
     };
 
@@ -64,7 +71,10 @@ function TableGlobalSearch() {
                 <form onSubmit={globalSearchHandler}>
                     <div className='_s_global_search_wrapper'>
                         {/* Close Search Modal -- Visible in mobile */}
-                        <div className='_s_close_search_modal' onClick={closeMobileSearch}>
+                        <div
+                            className='_s_close_search_modal'
+                            onClick={() => closeMobileSearch(true)}
+                        >
                             <svg
                                 stroke='currentColor'
                                 fill='currentColor'
@@ -73,8 +83,8 @@ function TableGlobalSearch() {
                                 xmlns='http://www.w3.org/2000/svg'
                             >
                                 <path
-                                    fill-rule='evenodd'
-                                    clip-rule='evenodd'
+                                    fillRule='evenodd'
+                                    clipRule='evenodd'
                                     d='M7 3.093l-5 5V8.8l5 5 .707-.707-4.146-4.147H14v-1H3.56L7.708 3.8 7 3.093z'
                                 ></path>
                             </svg>
@@ -86,7 +96,7 @@ function TableGlobalSearch() {
                             className='_s_global_search_input'
                             value={inputValue}
                             onChange={inputOnChangeHandler}
-                            placeholder='Search'
+                            placeholder={globalSearchPlaceholder || 'Search'}
                         />
 
                         <div>

@@ -7,6 +7,12 @@
     align-items: center;
 }
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 // -------- React Table Global Class Start --------
 ._s_btn {
     font-size: 13px;
@@ -29,8 +35,7 @@
 
 // -------- React Table Start --------
 ._s_react_table_wrapper {
-    width: 95%;
-    margin: 50px auto;
+    width: 100%;
     // font-family: 'DM Sans', sans-serif;
     font-family: 'Public Sans', sans-serif;
 
@@ -44,6 +49,9 @@
         width: 100%;
         max-width: 100%;
         overflow: auto;
+        border-radius: 4px;
+        overflow: hidden;
+        border: 1px solid $gray_300;
     }
 }
 ._s_react_table {
@@ -111,6 +119,7 @@
     padding-right: 25px;
     cursor: pointer;
     height: 100%;
+    background-color: $fff;
 }
 ._s_select_arrow_wrapper {
     @include flex_center();
@@ -288,7 +297,7 @@
         background: $fff;
         border-radius: 3px;
         @include flex_center();
-        padding: 6px;
+        padding: 8px;
         cursor: pointer;
 
         svg {
@@ -536,6 +545,10 @@
 // -------- React Table Setting End --------
 
 @media only screen and (max-width: 400px) {
+    .all_column_hidden_indicator_scroller {
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
     ._s_close_search_modal {
         width: 43px;
         height: 38px;
@@ -543,6 +556,7 @@
         color: $gray_700;
         border-radius: 4px;
         margin-right: 6px;
+        cursor: pointer;
 
         &:hover {
             background: $fff;
@@ -559,6 +573,10 @@
         }
     }
 
+    ._s_clear_global_search_wrapper {
+        transform: scale(1) !important;
+    }
+
     ._s_global_search_container._s_show_mobile_search_modal {
         position: fixed;
         top: 0;
@@ -566,8 +584,12 @@
         width: 100%;
         height: 100vh;
         z-index: 9999999999;
-        background: #f1f1ff;
+        background: $gray_200;
         padding: 6px;
+
+        ._s_clear_global_search_wrapper {
+            transform: scale(0.8) !important;
+        }
 
         ._s_global_search_input,
         ._s_close_search_modal {

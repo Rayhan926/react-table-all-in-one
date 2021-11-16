@@ -26,7 +26,7 @@ function Table({
     url,
     selectData,
     selectError,
-    // Paginations options
+    globalSearchPlaceholder,
     disableGlobalSearch,
     disableRowsPerPage,
     disablePagination,
@@ -190,6 +190,7 @@ function Table({
         disableGlobalSearch,
         disableSetting,
         loading,
+        globalSearchPlaceholder,
     };
 
     return (
