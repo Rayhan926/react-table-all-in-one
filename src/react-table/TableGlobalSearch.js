@@ -4,10 +4,7 @@ import { reactTableContext } from './Table';
 function TableGlobalSearch() {
     const {
         queryString,
-        setSearchParams,
-        setPage,
         searchParams,
-        pageString,
         loading,
         globalSearchPlaceholder,
         CustomGlobalSearch,

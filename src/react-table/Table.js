@@ -75,6 +75,8 @@ function Table({
 
     // For adding extra search param from outside oof the component
     const addSearchParam = (searchParamKey, searchParamValue) => {
+        if (!searchParamKey || !searchParamValue)
+            throw new Error('searchParamKey & searchParamValue is required for custom search'); // Validating params
         setSearchParams((prevState) => {
             if (prevState[searchParamKey] === searchParamValue) return prevState; // Preventing unwanted network request
             return {
@@ -354,4 +356,12 @@ function Table({
     );
 }
 
+/**
+ *
+ * Table is a all in one reusable data management table,
+ *
+ * You must have to install
+ * npm i react-table sass axios react-sortable-hoc array-move package
+ *
+ */
 export default Table;

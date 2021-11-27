@@ -50,7 +50,8 @@
         max-width: 100%;
         overflow: auto;
         border-radius: 4px;
-        overflow: hidden;
+        overflow: auto;
+        position: relative;
         border: 1px solid $gray_300;
     }
 }
@@ -76,7 +77,7 @@
 
     // -------- Table Body Start --------
     tbody {
-        position: relative;
+        // position: relative;
         tr {
             background: $fff;
             margin-bottom: 5px;
